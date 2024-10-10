@@ -3,6 +3,7 @@ import random
 from player import Player
 from maze import Maze
 from assets import draw_start_screen, draw_pause_screen, draw_menu_screen, draw_victory_screen
+#from shaders.crt_shader import Shader
 
 
 pygame.init()
@@ -68,6 +69,9 @@ clock = pygame.time.Clock()
 START, PLAYING, PAUSED, MENU, VICTORY = "start", "playing", "paused", "menu", "victory"
 game_state = START
 
+# Inicializa o shader
+#shader = Shader(game=screen)
+
 # Loop principal do jogo
 run = True
 while run:
@@ -122,7 +126,7 @@ while run:
                 run = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    
+
                     player.move('up', maze.maze)
                 elif event.key == pygame.K_s:
                     player.move('down', maze.maze)
@@ -154,5 +158,9 @@ while run:
         draw_pause_screen(screen, WIDTH, HEIGHT)
     elif game_state == VICTORY:
         draw_victory_screen(screen, WIDTH, HEIGHT)
+
+    # Aplica o shader
+    #shader.render()
+
 
 pygame.quit()
