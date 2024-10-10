@@ -65,3 +65,7 @@ class Maze:
                 else:
                     color = WHITE if self.maze[row][col] == 0 else BLACK
                 pygame.draw.rect(surface, color, (col * self.draw_size - offset_x, row * self.draw_size - offset_y, self.draw_size, self.draw_size))
+
+    def is_valid_position(self, x, y,):
+    # Verifica se a posição não é uma parede ou obstáculo
+        return self.maze[y][x] == 0  # Supondo que 0 representa um caminho livre
