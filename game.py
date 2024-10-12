@@ -5,7 +5,12 @@ from assets import draw_start_screen, draw_pause_screen, draw_menu_screen, draw_
 from shaders.crt_shader import Shader
 
 
-pygame.init()
+class Game:
+    def __init__(self):
+        pygame.init()
+        info = pygame.display.Info()
+        self.GAME_LOGIC_SIZE, self.SCREEN_SIZE = (1500, 720), (info.current_w, info.current_h)
+        self.NATIVE_SCREEN_SIZE = self.SCREEN_SIZEa
 
 # Definindo as cores
 YELLOW = (255, 255, 0)
@@ -22,7 +27,8 @@ pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEX
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
 
 # Inicializa o shader
-shader = Shader(game=screen)
+''' Alterar a linha abaixo e acabar a classe Game '''
+shader = Shader(game= screen) 
 
 # Dimensões das células do labirinto
 cell_size = 35  # Tamanho das células no labirinto
