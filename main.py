@@ -1,9 +1,8 @@
 import pygame
-import random
 from player import Player
 from maze import Maze
 from assets import draw_start_screen, draw_pause_screen, draw_menu_screen, draw_victory_screen
-#from shaders.crt_shader import Shader
+from shaders.crt_shader import Shader
 
 
 pygame.init()
@@ -15,7 +14,15 @@ BLACK = (0, 0, 0)
 
 # Dimensões da tela
 WIDTH, HEIGHT = 1500, 720
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+# Configurações da tela
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
+pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
+
+# Inicializa o shader
+shader = Shader(game=screen)
 
 # Dimensões das células do labirinto
 cell_size = 35  # Tamanho das células no labirinto
@@ -28,40 +35,6 @@ maze_height = HEIGHT // cell_size
 # Cria o labirinto
 maze = Maze(maze_width, maze_height, cell_size, draw_size)
 
-# Função para gerar uma posição válida para a chave
-def generate_key_position(maze):
-    while True:
-        x = random.randint(0, maze.width - 1)
-        y = random.randint(0, maze.height - 1)
-        if maze.is_valid_position(x, y):
-            return (x, y)
-
-# Inicializa a posição da chave
-key_pos = generate_key_position(maze)
-
-# Define a posição da chave
-#key_pos = (random.randint(1, maze_height - 2), random.randint(1, maze_width - 2))
-#while maze.maze[key_pos[0]][key_pos[1]] == 1:
-    # key_pos = (random.randint(1, maze_height - 2), random.randint(1, maze_width - 2))
-
-# Cria o jogador
-player = Player(1, 1, draw_size)
-has_key = False  # Variável para rastrear se a chave foi coletada
-
-def draw_key(surface, key_pos, offset_x, offset_y):
-    """Desenha a chave na tela."""
-    key_x, key_y = key_pos
-    pygame.draw.rect(surface, YELLOW, (key_x * draw_size - offset_x, key_y * draw_size - offset_y, draw_size, draw_size))
-
-def show_victory_screen():
-    """Mostra a tela de vitória."""
-    screen.fill(BLACK)
-    font = pygame.font.Font(None, 74)
-    text = font.render("Você venceu!", True, WHITE)
-    screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
-    pygame.display.flip()
-    pygame.time.wait(3000)
-
 # Configura o relógio para controlar a taxa de quadros
 clock = pygame.time.Clock()
 
@@ -69,8 +42,30 @@ clock = pygame.time.Clock()
 START, PLAYING, PAUSED, MENU, VICTORY = "start", "playing", "paused", "menu", "victory"
 game_state = START
 
-# Inicializa o shader
-#shader = Shader(game=screen)
+# Cria o jogador
+player = Player(1, 1, draw_size)
+has_key = False  # Variável para rastrear se a chave foi coletada
+
+# Inicializa a posição da chave
+key_pos = maze.generate_key_position()
+
+
+# Função para desenhar a chave na tela
+def draw_key(surface, key_pos, offset_x, offset_y):
+    """ Desenha a chave na tela."""
+    key_x, key_y = key_pos
+    pygame.draw.rect(surface, YELLOW, (key_x * draw_size - offset_x, key_y * draw_size - offset_y, draw_size, draw_size))
+
+
+# Função para mostrar a tela de vitória
+def show_victory_screen():
+    """ Mostra a tela de vitória."""
+    screen.fill(BLACK)
+    font = pygame.font.Font(None, 74)
+    text = font.render("Você venceu!", True, WHITE)
+    screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
+    pygame.display.flip()
+    pygame.time.wait(3000)
 
 # Loop principal do jogo
 run = True
@@ -121,34 +116,17 @@ while run:
         player.draw(screen, offset_x, offset_y)
         pygame.display.flip()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
-
-                    player.move('up', maze.maze)
-                elif event.key == pygame.K_s:
-                    player.move('down', maze.maze)
-                elif event.key == pygame.K_a:
-                    player.move('left', maze.maze)
-                elif event.key == pygame.K_d:
-                    player.move('right', maze.maze)
-
         player.update()
 
         # Verifica se o jogador coletou a chave
         if (int(player.x + 0.5), int(player.y + 0.5)) == key_pos:
             has_key = True
 
-        # Adiciona instruções de depuração
-        '''print(f"Player position: ({int(player.x + 0.5)}, {int(player.y + 0.5)})")
-        print(f"Key position: {key_pos}")
-        print(f"Has key: {has_key}")
-        print(f"Exit position: ({maze_height - 2}, {maze_width - 2})")'''
-
         # Verifica se o jogador chegou à saída e tem a chave
-        if (int(player.x + 0.5), int(player.y + 0.5)) == (maze_height - 2, maze_width - 2) and has_key:
+        player_pos = (int(player.x + 0.5), int(player.y + 0.5))
+        exit_pos = (maze_height - 2, maze_width - 2)
+
+        if player_pos == exit_pos and has_key:
             game_state = VICTORY
 
         # Controla a taxa de quadros
@@ -160,7 +138,7 @@ while run:
         draw_victory_screen(screen, WIDTH, HEIGHT)
 
     # Aplica o shader
-    #shader.render()
+    shader.render()
 
 
 pygame.quit()

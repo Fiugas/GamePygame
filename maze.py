@@ -69,3 +69,13 @@ class Maze:
     def is_valid_position(self, x, y,):
     # Verifica se a posição não é uma parede ou obstáculo
         return self.maze[y][x] == 0  # Supondo que 0 representa um caminho livre
+    
+    def generate_key_position(self):
+        """
+        Gera uma posição válida para a chave no labirinto.
+        """
+        while True:
+            x = random.randint(0, self.width - 1)
+            y = random.randint(0, self.height - 1)
+            if self.is_valid_position(x, y):
+                return (x, y)
