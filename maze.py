@@ -56,8 +56,8 @@ class Maze:
 
     def draw(self, surface, offset_x, offset_y):
         """Desenha o labirinto na tela com um offset."""
-        for row in range(len(self.maze)):
-            for col in range(len(self.maze[row])):
+        for row in enumerate(self.maze):
+            for col in enumerate((row)):
                 if row == 1 and col == 1:
                     color = GREEN  # Cor do ponto inicial
                 elif col == self.width - 2 and self.maze[row][col] == 0:
@@ -73,6 +73,17 @@ class Maze:
     def generate_key_position(self):
         """
         Gera uma posição válida para a chave no labirinto.
+        """
+        while True:
+            x = random.randint(0, self.width - 1)
+            y = random.randint(0, self.height - 1)
+            if self.is_valid_position(x, y):
+                return (x, y)
+            
+            
+    def generate_exit_position(self):
+        """
+        Gera uma posição válida para a saída no labirinto.
         """
         while True:
             x = random.randint(0, self.width - 1)

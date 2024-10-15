@@ -1,13 +1,10 @@
-import struct
-import pygame
-import moderngl
-import os
+import struct, pygame, moderngl, os
 
 class Shader:
     def __init__(self, game):
         self.game = game
-        self.ctx = moderngl.create_context()
         self.load_shaders()
+        self.ctx = moderngl.create_context()
         self.texture_coords = [
             0, 1,  1, 1,
             0, 0,  1, 0
@@ -21,8 +18,8 @@ class Shader:
             1, 2, 3
         ]
         self.program = self.ctx.program(
-            vertex_shader=open(self.vertex_shader_path).read(),
-            fragment_shader=open(self.fragment_shader_path).read()
+            vertex_shader = open(self.vertex_shader_path).read(),
+            fragment_shader = open(self.fragment_shader_path).read()
         )
         self.screen_texture = self.ctx.texture(
             game.GAME_LOGIC_SIZE, 3,
@@ -36,24 +33,17 @@ class Shader:
             (self.uvmap, '2f', 'in_text')
         ]
         self.vao = self.ctx.vertex_array(self.program, self.vao_content, self.ibo)
-
-    def load_shaders(self):
-        base_path = os.path.dirname(__file__)
-        self.vertex_shader_path = os.path.join(base_path, 'vertex_shader.glsl')
-        self.fragment_shader_path = os.path.join(base_path, 'fragment_shader.glsl')
-
-    def update_texture(self):
-        self.screen_texture.write(pygame.image.tostring(self.game.game_canvas, "RGB", 1))
+        self.program['ScreenResolution'] = game.GAME_LOGIC_SIZE
 
     def render(self):
-        self.update_texture()
+        self.ctx.viewport = (0, 0, *self.game.SCREEN_SIZE)
+        self.texture_data = self.game.game_canvas.get_view('1')
+        self.screen_texture.write(self.texture_data)
+        self.ctx.clear(14/255,40/255,66/255)
         self.screen_texture.use()
         self.vao.render()
 
-    def release(self):
-        self.vbo.release()
-        self.uvmap.release()
-        self.ibo.release()
-        self.screen_texture.release()
-        self.program.release()
-        self.vao.release()
+    def load_shaders(self):
+        self.shader_dir = os.path.join('shaders')
+        self.vertex_shader_path = os.path.join(self.shader_dir, 'vertex_shader.glsl')
+        self.fragment_shader_path = os.path.join(self.shader_dir, 'fragment_shader.glsl')
