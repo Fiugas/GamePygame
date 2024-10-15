@@ -4,6 +4,7 @@ from maze import Maze
 from assets import draw_start_screen, draw_pause_screen, draw_menu_screen, draw_victory_screen
 from shaders.crt_shader import Shader
 
+
 START, PLAYING, PAUSED, MENU, VICTORY = range(5)
 
 class Game:
@@ -22,21 +23,11 @@ class Game:
         self.WIDTH, self.HEIGHT = 1500, 720
 
         # Configurações da tela
-        '''pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
-        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
-        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)'''
-        #self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
 
-        # Inicializa o canvas do jogo
-        #self.game_canvas = pygame.Surface(self.GAME_LOGIC_SIZE)
-
-        # Inicializa o shader
-        #self.shader = Shader(game=self)
-
         # Dimensões das células do labirinto
-        self.cell_size = 35  # Tamanho das células no labirinto
-        self.draw_size = 100  # Tamanho usado para desenhar o jogador e a tela
+        self.cell_size = 45  # Tamanho das células no labirinto
+        self.draw_size = 50   # Tamanho usado para desenhar o jogador e a tela
 
         # Cria o labirinto
         self.maze = Maze(self.WIDTH, self.HEIGHT, self.cell_size, self.draw_size)
@@ -57,31 +48,19 @@ class Game:
         # Inicializa a posição da saída
         self.exit_pos = self.maze.generate_exit_position()
 
-
-    def draw_key(self, surface, key_pos, offset_x, offset_y):
-        """ Desenha a chave na tela."""
-        key_x, key_y = key_pos
-        pygame.draw.rect(surface, self.YELLOW, (key_x * self.draw_size - offset_x, key_y * self.draw_size - offset_y, self.draw_size, self.draw_size))
-
-
-# Função para mostrar a tela de vitória
-    def show_victory_screen(self):
-        """ Mostra a tela de vitória."""
-        self.screen.fill(self.BLACK)
-        font = pygame.font.Font(None, 74)
-        text = font.render("Você venceu!", True, self.WHITE)
-        self.screen.blit(text, (self.WIDTH // 2 - text.get_width() // 2, self.HEIGHT // 2 - text.get_height() // 2))
-        pygame.display.flip()
-        pygame.time.wait(3000)
-
     def run(self):
-        # Loop principal do jogo
-        run = True
-        while run:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-                elif event.type == pygame.KEYDOWN:
+        while True:
+            self.handle_events()
+            self.update()
+            self.draw()
+            self.clock.tick(60)  # Limita a taxa de quadros a 60 FPS
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN:
                     if self.game_state == START:
                         self.game_state = MENU
                     elif self.game_state == MENU:
@@ -93,64 +72,67 @@ class Game:
                     elif self.game_state == PLAYING:
                         if event.key == pygame.K_p:
                             self.game_state = PAUSED
-                        elif event.key == pygame.K_w:
-                            print("cima")
-                            self.player.move('up', self.maze.maze)
-                        elif event.key == pygame.K_s:
-                            print("baixo")
-                            self.player.move('down', self.maze.maze)
-                        elif event.key == pygame.K_a:
-                            print("esquerda")
-                            self.player.move('left', self.maze.maze)
-                        elif event.key == pygame.K_d:
-                            print("direita")
-                            self.player.move('right', self.maze.maze)
+                        else:
+                            self.handle_player_movement(event.key)
+                    elif self.game_state == PAUSED:
+                        if event.key == pygame.K_p:
+                            self.game_state = PLAYING
+                    elif self.game_state == MENU:
+                        if event.key == pygame.K_1:
+                            self.game_state = PLAYING
+                        elif event.key == pygame.K_2:
+                            pygame.quit()
+                            exit()
+                    elif self.game_state == VICTORY:
+                        if event.key == pygame.K_RETURN:
+                            self.game_state = START
 
+    def handle_player_movement(self, key):
+        if key == pygame.K_w:
+            self.player.move('up', self.maze.maze)
+        elif key == pygame.K_s:
+            self.player.move('down', self.maze.maze)
+        elif key == pygame.K_a:
+            self.player.move('left', self.maze.maze)
+        elif key == pygame.K_d:
+            self.player.move('right', self.maze.maze)
 
+    def update(self):
+        if self.game_state == PLAYING:
+            self.player.update()
+            if (self.player.x, self.player.y) == self.key_pos:
+                self.has_key = True
+            if (self.player.x, self.player.y) == self.exit_pos and self.has_key:
+                self.game_state = VICTORY
+
+    def draw(self):
+        if self.game_state == START:
+            draw_start_screen(self.screen, self.WIDTH, self.HEIGHT)
+        elif self.game_state == PLAYING:
+            self.screen.fill(self.BLACK)
+
+            # Calculate offsets
+            offset_x = self.player.x * self.draw_size - self.WIDTH // 2 + self.draw_size // 2
+            offset_y = self.player.y * self.draw_size - self.HEIGHT // 2 + self.draw_size // 2
             
-            if self.game_state == START:
-                draw_start_screen(self.screen, self.WIDTH, self.HEIGHT)
-            elif self.game_state == MENU:
-                draw_menu_screen(self.screen, self.WIDTH, self.HEIGHT)
-            elif self.game_state == PLAYING:   
-                self.screen.fill(self.BLACK)
-        
-        # Calcula o offset da câmera
-                offset_x = self.player.x * self.draw_size - self.WIDTH // 2 + self.draw_size // 2
-                offset_y = self.player.y * self.draw_size - self.HEIGHT // 2 + self.draw_size // 2
-                
-                self.maze.draw(self.screen, offset_x, offset_y)
-                if not self.has_key:
-                    self.draw_key(self.screen, self.key_pos, offset_x, offset_y)
-                self.player.draw(self.screen, offset_x, offset_y)
-                pygame.display.flip()
+            # Desenha o labirinto
+            self.maze.draw(self.screen, offset_x, offset_y, self.WIDTH, self.HEIGHT)
+            
+            # Desenha o jogador
+            self.player.draw(self.screen, offset_x, offset_y)
+            pygame.display.update()
+        elif self.game_state == PAUSED:
+            draw_pause_screen(self.screen, self.WIDTH, self.HEIGHT)
+        elif self.game_state == MENU:
+            draw_menu_screen(self.screen, self.WIDTH, self.HEIGHT)
+        elif self.game_state == VICTORY:
+            draw_victory_screen(self.screen, self.WIDTH, self.HEIGHT)
 
-                self.player.update()
-
-                # Verifica se o jogador coletou a chave
-                if (int(self.player.x + 0.5), int(self.player.y + 0.5)) == self.key_pos:
-                    self.has_key = True
-
-                # Verifica se o jogador chegou à saída com a chave
-                if (int(self.player.x + 0.5), int(self.player.y + 0.5)) == self.exit_pos and self.has_key:
-                    self.game_state = VICTORY
-
-            elif self.game_state == PAUSED:
-                draw_pause_screen(self.screen, self.WIDTH, self.HEIGHT)
-            elif self.game_state == VICTORY:
-                self.show_victory_screen()
-                run = False
-
-            # Controla a taxa de quadros
-            self.clock.tick(120)
-
-            # Adicione aqui a lógica de atualização e renderização do jogo
-            #self.shader.render()
-
-        pygame.quit()
-
-
-
-
-
-
+    def show_victory_screen(self):
+        """ Mostra a tela de vitória."""
+        self.screen.fill(self.BLACK)
+        font = pygame.font.Font(None, 74)
+        text = font.render("Você venceu!", True, self.WHITE)
+        self.screen.blit(text, (self.WIDTH // 2 - text.get_width() // 2, self.HEIGHT // 2 - text.get_height() // 2))
+        pygame.display.flip()
+        pygame.time.wait(3000)

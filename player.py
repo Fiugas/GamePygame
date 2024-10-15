@@ -21,8 +21,14 @@ class Player:
             self.target_x += 1
 
     def update(self):
-        self.x += (self.target_x - self.x) * 0.3
-        self.y += (self.target_y - self.y) * 0.3
+        dx = self.target_x - self.x
+        dy = self.target_y - self.y
+        if dx != 0:
+            self.x += dx // abs(dx)  # Move one step in the x direction
+        if dy != 0:
+            self.y += dy // abs(dy)  # Move one step in the y direction
 
     def draw(self, surface, offset_x, offset_y):
-        pygame.draw.rect(surface, RED, (self.x * self.draw_size - offset_x, self.y * self.draw_size - offset_y, self.draw_size, self.draw_size))
+        draw_x = self.x * self.draw_size - offset_x
+        draw_y = self.y * self.draw_size - offset_y
+        pygame.draw.rect(surface, RED, (draw_x, draw_y, self.draw_size, self.draw_size))
