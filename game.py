@@ -22,13 +22,14 @@ class Game:
         self.WIDTH, self.HEIGHT = 1500, 720
 
         # Configurações da tela
-        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
+        '''pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
         pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
-        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
+        pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)'''
+        #self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
+        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
 
         # Inicializa o canvas do jogo
-        self.game_canvas = pygame.Surface(self.GAME_LOGIC_SIZE)
+        #self.game_canvas = pygame.Surface(self.GAME_LOGIC_SIZE)
 
         # Inicializa o shader
         #self.shader = Shader(game=self)
@@ -85,6 +86,7 @@ class Game:
                         self.game_state = MENU
                     elif self.game_state == MENU:
                         if event.key == pygame.K_1:
+                            print("Iniciar jogo")
                             self.game_state = PLAYING
                         elif event.key == pygame.K_2:
                             run = False
@@ -92,12 +94,16 @@ class Game:
                         if event.key == pygame.K_p:
                             self.game_state = PAUSED
                         elif event.key == pygame.K_w:
+                            print("cima")
                             self.player.move('up', self.maze.maze)
                         elif event.key == pygame.K_s:
+                            print("baixo")
                             self.player.move('down', self.maze.maze)
                         elif event.key == pygame.K_a:
+                            print("esquerda")
                             self.player.move('left', self.maze.maze)
                         elif event.key == pygame.K_d:
+                            print("direita")
                             self.player.move('right', self.maze.maze)
 
 
@@ -136,17 +142,13 @@ class Game:
                 run = False
 
             # Controla a taxa de quadros
-            self.clock.tick(60)
+            self.clock.tick(120)
 
             # Adicione aqui a lógica de atualização e renderização do jogo
             #self.shader.render()
 
         pygame.quit()
 
-# Inicializa e executa o jogo
-if __name__ == "__main__":
-    game = Game()
-    game.run()
 
 
 

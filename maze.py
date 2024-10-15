@@ -54,22 +54,6 @@ class Maze:
             self.maze[row][0] = 1
             self.maze[row][self.width - 1] = 1
 
-    def draw(self, surface, offset_x, offset_y):
-        """Desenha o labirinto na tela com um offset."""
-        for row in enumerate(self.maze):
-            for col in enumerate((row)):
-                if row == 1 and col == 1:
-                    color = GREEN  # Cor do ponto inicial
-                elif col == self.width - 2 and self.maze[row][col] == 0:
-                    color = BLUE  # Cor do ponto final
-                else:
-                    color = WHITE if self.maze[row][col] == 0 else BLACK
-                pygame.draw.rect(surface, color, (col * self.draw_size - offset_x, row * self.draw_size - offset_y, self.draw_size, self.draw_size))
-
-    def is_valid_position(self, x, y,):
-    # Verifica se a posição não é uma parede ou obstáculo
-        return self.maze[y][x] == 0  # Supondo que 0 representa um caminho livre
-    
     def generate_key_position(self):
         """
         Gera uma posição válida para a chave no labirinto.
@@ -80,7 +64,6 @@ class Maze:
             if self.is_valid_position(x, y):
                 return (x, y)
             
-            
     def generate_exit_position(self):
         """
         Gera uma posição válida para a saída no labirinto.
@@ -90,3 +73,19 @@ class Maze:
             y = random.randint(0, self.height - 1)
             if self.is_valid_position(x, y):
                 return (x, y)
+            
+    def is_valid_position(self, x, y,):
+    # Verifica se a posição não é uma parede ou obstáculo
+        return self.maze[y][x] == 0  # Supondo que 0 representa um caminho livre
+    
+    def draw(self, surface, offset_x, offset_y):
+        """Desenha o labirinto na tela com um offset."""
+        for row_index, row in enumerate(self.maze):
+            for col_index, cell in enumerate((row)):
+                if row_index == 1 and col_index == 1:
+                    color = GREEN  # Cor do ponto inicial
+                elif col_index == self.width - 2 and self.maze[row_index][col_index] == 0:
+                    color = BLUE  # Cor do ponto final
+                else:
+                    color = WHITE if self.maze[row_index][col_index] == 0 else BLACK
+                pygame.draw.rect(surface, color, (col_index * self.draw_size - offset_x, row_index * self.draw_size - offset_y, self.draw_size, self.draw_size))
