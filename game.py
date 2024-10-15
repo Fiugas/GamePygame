@@ -13,6 +13,7 @@ class Game:
         info = pygame.display.Info()
         self.GAME_LOGIC_SIZE, self.SCREEN_SIZE = (1500, 720), (info.current_w, info.current_h)
         self.NATIVE_SCREEN_SIZE = self.SCREEN_SIZE
+        
 
         # Definindo as cores
         self.YELLOW = (255, 255, 0)
@@ -23,7 +24,7 @@ class Game:
         self.WIDTH, self.HEIGHT = 1500, 720
 
         # Configurações da tela
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
+        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
 
         # Dimensões das células do labirinto
         self.cell_size = 50  # Tamanho das células no labirinto
