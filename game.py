@@ -26,7 +26,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
 
         # Dimensões das células do labirinto
-        self.cell_size = 45  # Tamanho das células no labirinto
+        self.cell_size = 50  # Tamanho das células no labirinto
         self.draw_size = 50   # Tamanho usado para desenhar o jogador e a tela
 
         # Cria o labirinto
@@ -48,57 +48,27 @@ class Game:
         # Inicializa a posição da saída
         self.exit_pos = self.maze.generate_exit_position()
 
-    def run(self):
-        while True:
-            self.handle_events()
-            self.update()
-            self.draw()
-            self.clock.tick(60)  # Limita a taxa de quadros a 60 FPS
-
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            elif event.type == pygame.KEYDOWN:
-                    if self.game_state == START:
-                        self.game_state = MENU
-                    elif self.game_state == MENU:
-                        if event.key == pygame.K_1:
-                            print("Iniciar jogo")
-                            self.game_state = PLAYING
-                        elif event.key == pygame.K_2:
-                            run = False
-                    elif self.game_state == PLAYING:
-                        if event.key == pygame.K_p:
-                            self.game_state = PAUSED
-                        else:
-                            self.handle_player_movement(event.key)
-                    elif self.game_state == PAUSED:
-                        if event.key == pygame.K_p:
-                            self.game_state = PLAYING
-                    elif self.game_state == MENU:
-                        if event.key == pygame.K_1:
-                            self.game_state = PLAYING
-                        elif event.key == pygame.K_2:
-                            pygame.quit()
-                            exit()
-                    elif self.game_state == VICTORY:
-                        if event.key == pygame.K_RETURN:
-                            self.game_state = START
+        # Inicializa a direção de movimento do jogador
+        self.moving_direction = None
 
     def handle_player_movement(self, key):
         if key == pygame.K_w:
-            self.player.move('up', self.maze.maze)
+            self.moving_direction = 'up'
         elif key == pygame.K_s:
-            self.player.move('down', self.maze.maze)
+            self.moving_direction = 'down'
         elif key == pygame.K_a:
-            self.player.move('left', self.maze.maze)
+            self.moving_direction = 'left'
         elif key == pygame.K_d:
-            self.player.move('right', self.maze.maze)
+            self.moving_direction = 'right'
+
+    def stop_player_movement(self, key):
+        if key in [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d]:
+            self.moving_direction = None
 
     def update(self):
         if self.game_state == PLAYING:
+            if self.moving_direction:
+                self.player.move(self.moving_direction, self.maze.maze)
             self.player.update()
             if (self.player.x, self.player.y) == self.key_pos:
                 self.has_key = True
@@ -128,11 +98,35 @@ class Game:
         elif self.game_state == VICTORY:
             draw_victory_screen(self.screen, self.WIDTH, self.HEIGHT)
 
-    def show_victory_screen(self):
-        """ Mostra a tela de vitória."""
-        self.screen.fill(self.BLACK)
-        font = pygame.font.Font(None, 74)
-        text = font.render("Você venceu!", True, self.WHITE)
-        self.screen.blit(text, (self.WIDTH // 2 - text.get_width() // 2, self.HEIGHT // 2 - text.get_height() // 2))
-        pygame.display.flip()
-        pygame.time.wait(3000)
+    def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                elif event.type == pygame.KEYDOWN:
+                    if self.game_state == START:
+                        self.game_state = PLAYING
+                    elif self.game_state == PLAYING:
+                        if event.key == pygame.K_p:
+                            self.game_state = PAUSED
+                        else:
+                            self.handle_player_movement(event.key)
+                    elif self.game_state == PAUSED:
+                        if event.key == pygame.K_p:
+                            self.game_state = PLAYING
+                    elif self.game_state == MENU:
+                        if event.key == pygame.K_1:
+                            self.game_state = PLAYING
+                        elif event.key == pygame.K_2:
+                            pygame.quit()
+                            exit()
+                    elif self.game_state == VICTORY:
+                        if event.key == pygame.K_RETURN:
+                            self.game_state = START
+                elif event.type == pygame.KEYUP:
+                    self.stop_player_movement(event.key)
+
+            self.update()
+            self.draw()
+            self.clock.tick(60)  # Limita a taxa de quadros a 60 FPS
