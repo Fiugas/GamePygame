@@ -1,7 +1,7 @@
 import pygame
 from player import Player
 from maze import Maze
-from assets import draw_start_screen, draw_pause_screen, draw_menu_screen, draw_victory_screen
+from menus import draw_start_screen, draw_pause_screen, draw_menu_screen, draw_victory_screen
 from shaders.crt_shader import Shader
 
 
@@ -21,7 +21,7 @@ class Game:
         self.BLACK = (0, 0, 0)
 
         # Dimensões da tela
-        self.WIDTH, self.HEIGHT = 1500, 720
+        self.WIDTH, self.HEIGHT = 1920, 1080
 
         # Configurações da tela
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
@@ -52,15 +52,15 @@ class Game:
         # Inicializa a direção de movimento do jogador
         self.moving_direction = None
 
-    def handle_player_movement(self, key):
+    def handle_player_movement(self, key, is_keydown):
         if key == pygame.K_w:
-            self.moving_direction = 'up'
+            self.player.direction['up'] = is_keydown
         elif key == pygame.K_s:
-            self.moving_direction = 'down'
+            self.player.direction['down'] = is_keydown
         elif key == pygame.K_a:
-            self.moving_direction = 'left'
+            self.player.direction['left'] = is_keydown
         elif key == pygame.K_d:
-            self.moving_direction = 'right'
+            self.player.direction['right'] = is_keydown
 
     def stop_player_movement(self, key):
         if key in [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d]:
@@ -68,9 +68,7 @@ class Game:
 
     def update(self):
         if self.game_state == PLAYING:
-            if self.moving_direction:
-                self.player.move(self.moving_direction, self.maze.maze)
-            self.player.update()
+            self.player.update(self.maze.maze)  # Passar o atributo correto do labirinto
             if (self.player.x, self.player.y) == self.key_pos:
                 self.has_key = True
             if (self.player.x, self.player.y) == self.exit_pos and self.has_key:
@@ -88,9 +86,22 @@ class Game:
             
             # Desenha o labirinto
             self.maze.draw(self.screen, offset_x, offset_y, self.WIDTH, self.HEIGHT)
+
+            self.player.draw(self.screen, offset_x, offset_y)
+            
+            # Informações de depuração
+            font = pygame.font.SysFont(None, 24)
+            debug_info = [
+                f"Mapa: {self.maze.width}x{self.maze.height}",
+                f"Jogador: ({self.player.x}, {self.player.y})",
+                f"Chave: {self.key_pos}",
+                f"Saída: {self.exit_pos}"
+            ]
+            for i, info in enumerate(debug_info):
+                text = font.render(info, True, (255, 255, 255))
+                self.screen.blit(text, (10, 10 + i * 20))
             
             # Desenha o jogador
-            self.player.draw(self.screen, offset_x, offset_y)
             pygame.display.update()
         elif self.game_state == PAUSED:
             draw_pause_screen(self.screen, self.WIDTH, self.HEIGHT)
@@ -107,12 +118,12 @@ class Game:
                     exit()
                 elif event.type == pygame.KEYDOWN:
                     if self.game_state == START:
-                        self.game_state = PLAYING
+                        self.game_state = MENU
                     elif self.game_state == PLAYING:
                         if event.key == pygame.K_p:
                             self.game_state = PAUSED
                         else:
-                            self.handle_player_movement(event.key)
+                            self.handle_player_movement(event.key, True)
                     elif self.game_state == PAUSED:
                         if event.key == pygame.K_p:
                             self.game_state = PLAYING
@@ -126,7 +137,7 @@ class Game:
                         if event.key == pygame.K_RETURN:
                             self.game_state = START
                 elif event.type == pygame.KEYUP:
-                    self.stop_player_movement(event.key)
+                    self.handle_player_movement(event.key, False)
 
             self.update()
             self.draw()
