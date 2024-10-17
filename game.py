@@ -27,8 +27,11 @@ class Game:
         self.cell_size = 50  # Tamanho das células no labirinto
         self.draw_size = 50   # Tamanho usado para desenhar o jogador e a tela
 
+        # Nível do jogo
+        self.level = 6  # Começa no nível 1
+
         # Cria o labirinto
-        self.maze = Maze(self.SCREEN_SIZE[0], self.SCREEN_SIZE[1], self.cell_size, self.draw_size)
+        self.maze = Maze(self.level, self.cell_size, self.draw_size)
 
         # Configura o relógio para controlar a taxa de quadros
         self.clock = pygame.time.Clock()
