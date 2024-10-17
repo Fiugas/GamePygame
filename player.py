@@ -9,24 +9,32 @@ class Player:
         self.target_x = x
         self.target_y = y
         self.draw_size = draw_size
+        self.speed = 1  # Velocidade do jogador
+        self.direction = {'up': False, 'down': False, 'left': False, 'right': False}
 
     def move(self, direction, maze):
-        if direction == 'up' and maze[self.target_y - 1][self.target_x] == 0:
-            self.target_y -= 1
-        elif direction == 'down' and maze[self.target_y + 1][self.target_x] == 0:
-            self.target_y += 1
-        elif direction == 'left' and maze[self.target_y][self.target_x - 1] == 0:
-            self.target_x -= 1
-        elif direction == 'right' and maze[self.target_y][self.target_x + 1] == 0:
-            self.target_x += 1
+        if direction == 'up' and self.can_move(self.x, self.y - 1, maze):
+            self.y -= self.speed
+        elif direction == 'down' and self.can_move(self.x, self.y + 1, maze):
+            self.y += self.speed
+        elif direction == 'left' and self.can_move(self.x - 1, self.y, maze):
+            self.x -= self.speed
+        elif direction == 'right' and self.can_move(self.x + 1, self.y, maze):
+            self.x += self.speed
 
-    def update(self):
-        dx = self.target_x - self.x
-        dy = self.target_y - self.y
-        if dx != 0:
-            self.x += dx // abs(dx)  # Move one step in the x direction
-        if dy != 0:
-            self.y += dy // abs(dy)  # Move one step in the y direction
+    def can_move(self, x, y, maze):
+        # Verifica se o jogador pode se mover para a posição (x, y)
+        return maze[y, x] == 0
+
+    def update(self, maze):
+        if self.direction['up']:
+            self.move('up', maze)
+        if self.direction['down']:
+            self.move('down', maze)
+        if self.direction['left']:
+            self.move('left', maze)
+        if self.direction['right']:
+            self.move('right', maze)
 
     def draw(self, surface, offset_x, offset_y):
         draw_x = self.x * self.draw_size - offset_x

@@ -13,7 +13,7 @@ class Maze:
         self.height = height
         self.cell_size = cell_size
         self.draw_size = draw_size
-        self.maze = np.ones((height, width), dtype=int)
+        self.maze = np.ones((height, width), dtype=int) # Atributo que armazena a estrutura do labirinto
         self.generate_maze_dfs()
         self.add_boundaries()
 
