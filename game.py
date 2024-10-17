@@ -11,20 +11,17 @@ class Game:
     def __init__(self):
         pygame.init()
         info = pygame.display.Info()
-        self.GAME_LOGIC_SIZE, self.SCREEN_SIZE = (1500, 720), (info.current_w, info.current_h)
+        self.GAME_LOGIC_SIZE, self.SCREEN_SIZE = (1920, 1080), (info.current_w, info.current_h)
         self.NATIVE_SCREEN_SIZE = self.SCREEN_SIZE
-        
+
 
         # Definindo as cores
         self.YELLOW = (255, 255, 0)
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
 
-        # Dimensões da tela
-        self.WIDTH, self.HEIGHT = 1920, 1080
-
         # Configurações da tela
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
+        self.screen = pygame.display.set_mode((self.SCREEN_SIZE[0],self.SCREEN_SIZE[1]), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
 
         # Dimensões das células do labirinto
         self.cell_size = 50  # Tamanho das células no labirinto
@@ -76,7 +73,7 @@ class Game:
 
     def draw(self):
         if self.game_state == START:
-            draw_start_screen(self.screen, self.WIDTH, self.HEIGHT)
+            draw_start_screen(self.screen, self.SCREEN_SIZE[0], self.SCREEN_SIZE[1])
         elif self.game_state == PLAYING:
             self.screen.fill(self.BLACK)
 
