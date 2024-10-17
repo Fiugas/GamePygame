@@ -73,10 +73,10 @@ class Maze:
     def get_visible_cells(self, offset_x, offset_y, screen_width, screen_height):
         """Retorna as células visíveis com base no offset e no tamanho da tela."""
         visible_cells = []
-        start_col = max(0, offset_x // self.draw_size)
-        end_col = min(self.width, (offset_x + screen_width) // self.draw_size + 1)
-        start_row = max(0, offset_y // self.draw_size)
-        end_row = min(self.height, (offset_y + screen_height) // self.draw_size + 1)
+        start_col = max(0, int(offset_x) // self.draw_size)
+        end_col = min(self.width, int(offset_x + screen_width) // self.draw_size + 1)
+        start_row = max(0, int(offset_y) // self.draw_size)
+        end_row = min(self.height, int(offset_y + screen_height) // self.draw_size + 1)
         
         for row in range(start_row, end_row):
             for col in range(start_col, end_col):
@@ -96,4 +96,3 @@ class Maze:
             else:
                 color = WHITE if self.maze[row_index][col_index] == 0 else BLACK
             pygame.draw.rect(surface, color, (col_index * self.draw_size - offset_x, row_index * self.draw_size - offset_y, self.draw_size, self.draw_size))
-    ...
