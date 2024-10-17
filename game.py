@@ -28,7 +28,7 @@ class Game:
         self.draw_size = 50   # Tamanho usado para desenhar o jogador e a tela
 
         # Cria o labirinto
-        self.maze = Maze(self.WIDTH, self.HEIGHT, self.cell_size, self.draw_size)
+        self.maze = Maze(self.SCREEN_SIZE[0], self.SCREEN_SIZE[1], self.cell_size, self.draw_size)
 
         # Configura o relógio para controlar a taxa de quadros
         self.clock = pygame.time.Clock()
@@ -78,11 +78,11 @@ class Game:
             self.screen.fill(self.BLACK)
 
             # Calculate offsets
-            offset_x = self.player.x * self.draw_size - self.WIDTH // 2 + self.draw_size // 2
-            offset_y = self.player.y * self.draw_size - self.HEIGHT // 2 + self.draw_size // 2
+            offset_x = self.player.x * self.draw_size - self.SCREEN_SIZE[0] // 2 + self.draw_size // 2
+            offset_y = self.player.y * self.draw_size - self.SCREEN_SIZE[1] // 2 + self.draw_size // 2
             
             # Desenha o labirinto
-            self.maze.draw(self.screen, offset_x, offset_y, self.WIDTH, self.HEIGHT)
+            self.maze.draw(self.screen, offset_x, offset_y, self.SCREEN_SIZE[0], self.SCREEN_SIZE[1])
 
             self.player.draw(self.screen, offset_x, offset_y)
 
@@ -101,11 +101,11 @@ class Game:
             # Desenha o jogador
             pygame.display.update()
         elif self.game_state == PAUSED:
-            draw_pause_screen(self.screen, self.WIDTH, self.HEIGHT)
+            draw_pause_screen(self.screen, self.SCREEN_SIZE[0], self.SCREEN_SIZE[1])
         elif self.game_state == MENU:
-            draw_menu_screen(self.screen, self.WIDTH, self.HEIGHT)
+            draw_menu_screen(self.screen, self.SCREEN_SIZE[0], self.SCREEN_SIZE[1])
         elif self.game_state == VICTORY:
-            draw_victory_screen(self.screen, self.WIDTH, self.HEIGHT)
+            draw_victory_screen(self.screen, self.SCREEN_SIZE[0], self.SCREEN_SIZE[1])
 
 
     def run(self):
