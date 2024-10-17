@@ -32,7 +32,7 @@ class Game:
 
         # Configura o relógio para controlar a taxa de quadros
         self.clock = pygame.time.Clock()
-
+#hello
         # Estados do jogo
         self.game_state = START
 
