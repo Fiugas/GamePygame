@@ -32,7 +32,7 @@ class Game:
 
         # Configura o relógio para controlar a taxa de quadros
         self.clock = pygame.time.Clock()
-#hello
+
         # Estados do jogo
         self.game_state = START
 
@@ -97,7 +97,7 @@ class Game:
             for i, info in enumerate(debug_info):
                 text = font.render(info, True, (255, 255, 255))
                 self.screen.blit(text, (10, 10 + i * 20))
-            
+                
             # Desenha o jogador
             pygame.display.update()
         elif self.game_state == PAUSED:
