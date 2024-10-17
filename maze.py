@@ -96,3 +96,6 @@ class Maze:
             else:
                 color = WHITE if self.maze[row_index][col_index] == 0 else BLACK
             pygame.draw.rect(surface, color, (col_index * self.draw_size - offset_x, row_index * self.draw_size - offset_y, self.draw_size, self.draw_size))
+
+        
+#Dinis o nosso revisor
