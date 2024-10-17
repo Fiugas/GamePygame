@@ -100,7 +100,7 @@ class Maze:
             if row_index == 1 and col_index == 1:
                 color = GREEN  # Cor do ponto inicial
             elif col_index == self.width - 2 and self.maze[row_index][col_index] == 0:
-                color = BLUE  # Cor do ponto final
+                color = WHITE  # Cor do ponto final
             else:
                 color = WHITE if self.maze[row_index][col_index] == 0 else BLACK
             pygame.draw.rect(surface, color, (col_index * self.draw_size - offset_x, row_index * self.draw_size - offset_y, self.draw_size, self.draw_size))
