@@ -85,7 +85,7 @@ class Game:
             self.maze.draw(self.screen, offset_x, offset_y, self.WIDTH, self.HEIGHT)
 
             self.player.draw(self.screen, offset_x, offset_y)
-            
+
             # Informações de depuração
             font = pygame.font.SysFont(None, 24)
             debug_info = [
@@ -107,6 +107,7 @@ class Game:
         elif self.game_state == VICTORY:
             draw_victory_screen(self.screen, self.WIDTH, self.HEIGHT)
 
+
     def run(self):
         while True:
             for event in pygame.event.get():
@@ -119,6 +120,11 @@ class Game:
                     elif self.game_state == PLAYING:
                         if event.key == pygame.K_p:
                             self.game_state = PAUSED
+                        elif event.key == pygame.K_z:
+                            self.game_state = MENU
+                        elif event.key == pygame.K_0:
+                            pygame.quit()
+                            exit()
                         else:
                             self.handle_player_movement(event.key, True)
                     elif self.game_state == PAUSED:
