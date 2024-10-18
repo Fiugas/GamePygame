@@ -19,6 +19,8 @@ class Game:
         self.YELLOW = (255, 255, 0)
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
+        self.GOLD = (255, 215, 0)  # Cor da chave
+        self.BLUE = (0, 0, 255)    # Cor da saída
 
         # Configurações da tela
         self.screen = pygame.display.set_mode((self.SCREEN_SIZE[0],self.SCREEN_SIZE[1]), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
@@ -28,7 +30,7 @@ class Game:
         self.draw_size = 50   # Tamanho usado para desenhar o jogador e a tela
 
         # Nível do jogo
-        self.level = 6  # Começa no nível 1
+        self.level = 10  # Começa no nível 1
 
         # Cria o labirinto
         self.maze = Maze(self.level, self.cell_size, self.draw_size)
@@ -88,6 +90,16 @@ class Game:
             self.maze.draw(self.screen, offset_x, offset_y, self.SCREEN_SIZE[0], self.SCREEN_SIZE[1])
 
             self.player.draw(self.screen, offset_x, offset_y)
+
+            # Desenha a chave
+            key_draw_x = self.key_pos[0] * self.draw_size - offset_x
+            key_draw_y = self.key_pos[1] * self.draw_size - offset_y
+            pygame.draw.rect(self.screen, self.GOLD, (key_draw_x, key_draw_y, self.draw_size, self.draw_size))
+
+            # Desenha a saída
+            exit_draw_x = self.exit_pos[0] * self.draw_size - offset_x
+            exit_draw_y = self.exit_pos[1] * self.draw_size - offset_y
+            pygame.draw.rect(self.screen, self.BLUE, (exit_draw_x, exit_draw_y, self.draw_size, self.draw_size))
 
             # Informações de depuração
             font = pygame.font.SysFont(None, 24)
