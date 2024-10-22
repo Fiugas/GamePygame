@@ -27,10 +27,10 @@ class Game:
 
         # Dimensões das células do labirinto
         self.cell_size = 50  # Tamanho das células no labirinto
-        self.draw_size = 50   # Tamanho usado para desenhar o jogador e a tela
+        self.draw_size = 100   # Tamanho usado para desenhar o jogador e a tela
 
         # Nível do jogo
-        self.level = 10  # Começa no nível 1
+        self.level = 1  # Começa no nível 1
 
         # Cria o labirinto
         self.maze = Maze(self.level, self.cell_size, self.draw_size)
@@ -68,13 +68,24 @@ class Game:
         if key in [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d]:
             self.moving_direction = None
 
+
+    def restart_game(self):
+        """Reinicia o jogo com o próximo nível."""
+        self.level += 1
+        self.maze = Maze(self.level, self.cell_size, self.draw_size)
+        self.player = Player(1, 1, self.draw_size)
+        self.has_key = False
+        self.key_pos = self.maze.generate_key_position()
+        self.exit_pos = self.maze.generate_exit_position()
+        self.game_state = PLAYING
+
     def update(self):
         if self.game_state == PLAYING:
             self.player.update(self.maze.maze)  # Passar o atributo correto do labirinto
             if (self.player.x, self.player.y) == self.key_pos:
                 self.has_key = True
             if (self.player.x, self.player.y) == self.exit_pos and self.has_key:
-                self.game_state = VICTORY
+                self.restart_game()  # Reinicia o jogo com o próximo nível
 
     def draw(self):
         if self.game_state == START:
