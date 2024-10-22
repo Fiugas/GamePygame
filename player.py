@@ -11,6 +11,9 @@ class Player:
         self.draw_size = draw_size
         self.speed = 1  # Velocidade do jogador
         self.direction = {'up': False, 'down': False, 'left': False, 'right': False}
+        self.frame_count = 0
+        self.move_interval = 5  # Intervalo de movimento em quadros
+
 
     def move(self, direction, maze):
         if direction == 'up' and self.can_move(self.x, self.y - 1, maze):
@@ -27,14 +30,17 @@ class Player:
         return maze[y, x] == 0
 
     def update(self, maze):
-        if self.direction['up']:
-            self.move('up', maze)
-        if self.direction['down']:
-            self.move('down', maze)
-        if self.direction['left']:
-            self.move('left', maze)
-        if self.direction['right']:
-            self.move('right', maze)
+        self.frame_count += 1
+        if self.frame_count >= self.move_interval:
+            if self.direction['up']:
+                self.move('up', maze)
+            if self.direction['down']:
+                self.move('down', maze)
+            if self.direction['left']:
+                self.move('left', maze)
+            if self.direction['right']:
+                self.move('right', maze)
+            self.frame_count = 0  # Reinicia o contador de quadros
 
     def draw(self, surface, offset_x, offset_y):
         draw_x = self.x * self.draw_size - offset_x
