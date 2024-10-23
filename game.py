@@ -110,10 +110,11 @@ class Game:
 
             self.player.draw(self.screen, offset_x, offset_y)
 
-            # Desenha a chave
-            key_draw_x = self.key_pos[0] * self.draw_size - offset_x
-            key_draw_y = self.key_pos[1] * self.draw_size - offset_y
-            self.screen.blit(self.key_sprite, (key_draw_x, key_draw_y))
+            if self.has_key is not True:
+                # Desenha a chave
+                key_draw_x = self.key_pos[0] * self.draw_size - offset_x
+                key_draw_y = self.key_pos[1] * self.draw_size - offset_y
+                self.screen.blit(self.key_sprite, (key_draw_x, key_draw_y))
 
             # Desenha a saída
             exit_draw_x = self.exit_pos[0] * self.draw_size - offset_x
