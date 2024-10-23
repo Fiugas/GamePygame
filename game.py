@@ -16,7 +16,6 @@ class Game:
 
 
         # Definindo as cores
-        self.YELLOW = (255, 255, 0)
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
         self.GOLD = (255, 215, 0)  # Cor da chave
@@ -146,16 +145,16 @@ class Game:
                     elif self.game_state == PLAYING:
                         if event.key == pygame.K_p:
                             self.game_state = PAUSED
-                        elif event.key == pygame.K_z:
-                            self.game_state = MENU
-                        elif event.key == pygame.K_0:
-                            pygame.quit()
-                            exit()
                         else:
                             self.handle_player_movement(event.key, True)
                     elif self.game_state == PAUSED:
                         if event.key == pygame.K_p:
                             self.game_state = PLAYING
+                        elif event.key == pygame.K_z:
+                            self.game_state = MENU
+                        elif event.key == pygame.K_0:
+                            pygame.quit()
+                            exit()
                     elif self.game_state == MENU:
                         if event.key == pygame.K_1:
                             self.game_state = PLAYING
