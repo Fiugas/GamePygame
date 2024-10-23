@@ -36,6 +36,7 @@ class Game:
             print("Não foi possível carregar a imagem da chave. Usando retângulo como fallback.")
             self.key_sprite = None
 
+
         # Nível do jogo
         self.level = 1  # Começa no nível 1
 
@@ -153,16 +154,16 @@ class Game:
                     elif self.game_state == PLAYING:
                         if event.key == pygame.K_p:
                             self.game_state = PAUSED
-                        elif event.key == pygame.K_z:
-                            self.game_state = MENU
-                        elif event.key == pygame.K_0:
-                            pygame.quit()
-                            exit()
                         else:
                             self.handle_player_movement(event.key, True)
                     elif self.game_state == PAUSED:
                         if event.key == pygame.K_p:
                             self.game_state = PLAYING
+                        elif event.key == pygame.K_z:
+                            self.game_state = MENU
+                        elif event.key == pygame.K_0:
+                            pygame.quit()
+                            exit()
                     elif self.game_state == MENU:
                         if event.key == pygame.K_1:
                             self.game_state = PLAYING
