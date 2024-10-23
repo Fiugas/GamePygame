@@ -16,10 +16,8 @@ class Game:
 
 
         # Definindo as cores
-        self.YELLOW = (255, 255, 0)
         self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
-        self.GOLD = (255, 215, 0)  # Cor da chave
         self.BLUE = (0, 0, 255)    # Cor da saída
 
         # Configurações da tela
@@ -28,6 +26,15 @@ class Game:
         # Dimensões das células do labirinto
         self.cell_size = 50  # Tamanho das células no labirinto
         self.draw_size = 100   # Tamanho usado para desenhar o jogador e a tela
+
+        # chave
+        try:
+            self.key_sprite = pygame.image.load('sprintes/Dragon_Head_29.jpg')  
+            # Redimensiona o sprite para o tamanho da célula
+            self.key_sprite = pygame.transform.scale(self.key_sprite, (self.cell_size, self.cell_size))
+        except pygame.error:
+            print("Não foi possível carregar a imagem da chave. Usando retângulo como fallback.")
+            self.key_sprite = None
 
         # Nível do jogo
         self.level = 1  # Começa no nível 1
@@ -105,7 +112,7 @@ class Game:
             # Desenha a chave
             key_draw_x = self.key_pos[0] * self.draw_size - offset_x
             key_draw_y = self.key_pos[1] * self.draw_size - offset_y
-            pygame.draw.rect(self.screen, self.GOLD, (key_draw_x, key_draw_y, self.draw_size, self.draw_size))
+            self.screen.blit(self.key_sprite, (key_draw_x, key_draw_y))
 
             # Desenha a saída
             exit_draw_x = self.exit_pos[0] * self.draw_size - offset_x
