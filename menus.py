@@ -15,7 +15,7 @@ def draw_pause_screen(screen, width, height):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 74)
     draw_text(screen, "Jogo Pausado", font, (255, 255, 255), width // 2, height // 2 - 100)
-    draw_text(screen, "Pressione P para continuar", font, (255, 255, 255), width // 2, height // 2 )
+    draw_text(screen, "Pressione Esc para continuar", font, (255, 255, 255), width // 2, height // 2 )
     draw_text(screen, "Pressione Z para voltar", font, (255, 255, 255), width // 2, height // 2 + 100)
     draw_text(screen, "Pressione 0 para sair", font, (255, 255, 255), width // 2, height // 2 + 200)
     pygame.display.flip()
