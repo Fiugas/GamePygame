@@ -152,12 +152,12 @@ class Game:
                     if self.game_state == START:
                         self.game_state = MENU
                     elif self.game_state == PLAYING:
-                        if event.key == pygame.K_p:
+                        if event.key == pygame.K_ESCAPE:
                             self.game_state = PAUSED
                         else:
                             self.handle_player_movement(event.key, True)
                     elif self.game_state == PAUSED:
-                        if event.key == pygame.K_p:
+                        if event.key == pygame.K_ESCAPE:
                             self.game_state = PLAYING
                         elif event.key == pygame.K_z:
                             self.game_state = MENU
