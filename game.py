@@ -29,9 +29,9 @@ class Game:
 
         # chave
         try:
-            self.key_sprite = pygame.image.load('sprintes/Dragon_Head_29.jpg')  
+            self.key_sprite = pygame.image.load('sprites/Dragon_Egg.jpg')
             # Redimensiona o sprite para o tamanho da célula
-            self.key_sprite = pygame.transform.scale(self.key_sprite, (self.cell_size, self.cell_size))
+            self.key_sprite = pygame.transform.scale(self.key_sprite, (self.draw_size, self.draw_size))
         except pygame.error:
             print("Não foi possível carregar a imagem da chave. Usando retângulo como fallback.")
             self.key_sprite = None
@@ -95,6 +95,33 @@ class Game:
             if (self.player.x, self.player.y) == self.exit_pos and self.has_key:
                 self.restart_game()  # Reinicia o jogo com o próximo nível
 
+    def calculate_offset(self):
+        offset_x = self.player.x * self.draw_size - self.SCREEN_SIZE[0] // 2 + self.draw_size // 2
+        offset_y = self.player.y * self.draw_size - self.SCREEN_SIZE[1] // 2 + self.draw_size // 2
+        return offset_x, offset_y
+
+    def draw_key(self, offset_x, offset_y):
+        key_draw_x = self.key_pos[0] * self.draw_size - offset_x
+        key_draw_y = self.key_pos[1] * self.draw_size - offset_y
+        self.screen.blit(self.key_sprite, (key_draw_x, key_draw_y))
+
+    def draw_exit(self, offset_x, offset_y):
+        exit_draw_x = self.exit_pos[0] * self.draw_size - offset_x
+        exit_draw_y = self.exit_pos[1] * self.draw_size - offset_y
+        pygame.draw.rect(self.screen, self.BLUE, (exit_draw_x, exit_draw_y, self.draw_size, self.draw_size))
+
+    def draw_info(self):
+        font = pygame.font.SysFont(None, 24)
+        debug_info = [
+            f"Mapa: {self.maze.width}x{self.maze.height}",
+            f"Jogador: ({self.player.x}, {self.player.y})",
+            f"Chave: {self.key_pos}",
+            f"Saída: {self.exit_pos}"
+        ]
+        for i, info in enumerate(debug_info):
+            text = font.render(info, True, (255, 255, 255))
+            self.screen.blit(text, (10, 10 + i * 20))
+
     def draw(self):
         if self.game_state == START:
             draw_start_screen(self.screen, self.SCREEN_SIZE[0], self.SCREEN_SIZE[1])
@@ -102,9 +129,8 @@ class Game:
             self.screen.fill(self.BLACK)
 
             # Calculate offsets
-            offset_x = self.player.x * self.draw_size - self.SCREEN_SIZE[0] // 2 + self.draw_size // 2
-            offset_y = self.player.y * self.draw_size - self.SCREEN_SIZE[1] // 2 + self.draw_size // 2
-            
+            offset_x, offset_y = self.calculate_offset()
+
             # Desenha o labirinto
             self.maze.draw(self.screen, offset_x, offset_y, self.SCREEN_SIZE[0], self.SCREEN_SIZE[1])
 
@@ -112,27 +138,14 @@ class Game:
 
             if self.has_key is not True:
                 # Desenha a chave
-                key_draw_x = self.key_pos[0] * self.draw_size - offset_x
-                key_draw_y = self.key_pos[1] * self.draw_size - offset_y
-                self.screen.blit(self.key_sprite, (key_draw_x, key_draw_y))
+                self.draw_key(offset_x, offset_y)
 
             # Desenha a saída
-            exit_draw_x = self.exit_pos[0] * self.draw_size - offset_x
-            exit_draw_y = self.exit_pos[1] * self.draw_size - offset_y
-            pygame.draw.rect(self.screen, self.BLUE, (exit_draw_x, exit_draw_y, self.draw_size, self.draw_size))
+            self.draw_exit(offset_x, offset_y)
 
             # Informações de depuração
-            font = pygame.font.SysFont(None, 24)
-            debug_info = [
-                f"Mapa: {self.maze.width}x{self.maze.height}",
-                f"Jogador: ({self.player.x}, {self.player.y})",
-                f"Chave: {self.key_pos}",
-                f"Saída: {self.exit_pos}"
-            ]
-            for i, info in enumerate(debug_info):
-                text = font.render(info, True, (255, 255, 255))
-                self.screen.blit(text, (10, 10 + i * 20))
-                
+            self.draw_info()
+
             # Desenha o jogador
             pygame.display.update()
         elif self.game_state == PAUSED:
