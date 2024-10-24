@@ -16,7 +16,6 @@ class Game:
 
 
         # Definindo as cores
-        self.WHITE = (255, 255, 255)
         self.BLACK = (0, 0, 0)
         self.BLUE = (0, 0, 255)    # Cor da saída
 
