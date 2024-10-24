@@ -5,7 +5,7 @@ import numpy as np
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+
 
 class Maze:
     def __init__(self, level, cell_size, draw_size):
@@ -34,7 +34,7 @@ class Maze:
         self.maze[end_row][end_col] = 0
         stack = [(start_row, start_col)]
         directions = [(-2, 0), (2, 0), (0, -2), (0, 2)]
-        
+
         while stack:
             current_row, current_col = stack[-1]
             neighbors = []
@@ -85,22 +85,23 @@ class Maze:
         end_col = min(self.width, int(offset_x + screen_width) // self.draw_size + 1)
         start_row = max(0, int(offset_y) // self.draw_size)
         end_row = min(self.height, int(offset_y + screen_height) // self.draw_size + 1)
-        
+
         for row in range(start_row, end_row):
             for col in range(start_col, end_col):
                 visible_cells.append((row, col))
-        
+
         return visible_cells
 
     def draw(self, surface, offset_x, offset_y, screen_width, screen_height):
         """Desenha o labirinto na tela com um offset, desenhando apenas as células visíveis."""
         visible_cells = self.get_visible_cells(offset_x, offset_y, screen_width, screen_height)
-        
+
         for row_index, col_index in visible_cells:
             if row_index == 1 and col_index == 1:
                 color = GREEN  # Cor do ponto inicial
-            elif col_index == self.width - 2 and self.maze[row_index][col_index] == 0:
-                color = WHITE  # Cor do ponto final
             else:
-                color = WHITE if self.maze[row_index][col_index] == 0 else BLACK
+                if self.maze[row_index][col_index] == 0:
+                    color = WHITE
+                else:
+                    color= BLACK
             pygame.draw.rect(surface, color, (col_index * self.draw_size - offset_x, row_index * self.draw_size - offset_y, self.draw_size, self.draw_size))

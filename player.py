@@ -1,7 +1,5 @@
 import pygame
 
-RED = (255, 0, 0)
-
 class Player:
     def __init__(self, x, y, draw_size):
         self.x = x
@@ -13,7 +11,6 @@ class Player:
         self.direction = {'up': False, 'down': False, 'left': False, 'right': False}
         self.frame_count = 0
         self.move_interval = 5  # Intervalo de movimento em quadros
-
 
     def move(self, direction, maze):
         if direction == 'up' and self.can_move(self.x, self.y - 1, maze):
@@ -45,4 +42,11 @@ class Player:
     def draw(self, surface, offset_x, offset_y):
         draw_x = self.x * self.draw_size - offset_x
         draw_y = self.y * self.draw_size - offset_y
-        pygame.draw.rect(surface, RED, (draw_x, draw_y, self.draw_size, self.draw_size))
+        try:
+            self.player_sprite = pygame.image.load('sprites/Dragon_Head_29.jpg')
+            # Redimensiona o sprite para o tamanho da célula
+            self.player_sprite = pygame.transform.scale(self.player_sprite, (self.draw_size, self.draw_size))
+        except pygame.error:
+            print("Não foi possível carregar a imagem da chave. Usando retângulo como fallback.")
+            self.player_sprite = None
+        surface.blit(self.player_sprite, (draw_x, draw_y))
