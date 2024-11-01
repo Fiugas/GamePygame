@@ -76,8 +76,12 @@ class Game:
         surface.blit(text_surface, text_rect)
 
     def load_assets(self):
-        self.sprites_dir = os.path.join('sprites')
-        self.font = pygame.font.Font("freesansbold.ttf", 15)
+        self.assets_dir = os.path.join('assets')
+        self.sprites_dir = os.path.join(self.assets_dir, 'sprites')
+        self.font_dir = os.path.join(self.assets_dir, 'fonts')
+        self.background = pygame.image.load('assets/background/background_start.png')
+        self.background = pygame.transform.scale(self.background, self.SCREEN_SIZE)
+        self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
 
     def load_state(self):
         self.state_stack.append(StartScreen(self))
