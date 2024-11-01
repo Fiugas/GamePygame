@@ -18,7 +18,7 @@ class PauseScreen(State):
             self.game.running, self.game.playing = False, False
         self.game.reset_player_actions()
 
-    def render(self, surface):
+    def render(self, dt, surface):
         surface.fill(self.game.colors['BLACK'])
         self.game.draw_text(surface, 'Game paused', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 4))
         self.game.draw_text(surface, 'Press ESC to resume', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3))

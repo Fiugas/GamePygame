@@ -11,5 +11,5 @@ class GameWorld(State):
             new_state.enter_state()
         self.game.reset_player_actions()
 
-    def render(self, surface):
+    def render(self, dt, surface):
         surface.fill(self.game.colors['WHITE'])

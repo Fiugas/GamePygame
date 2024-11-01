@@ -59,7 +59,7 @@ class Game:
         self.state_stack[-1].update(self.dt, self.player_actions)
 
     def render(self):
-        self.state_stack[-1].render(self.game_canvas)
+        self.state_stack[-1].render(self.dt, self.game_canvas)
         self.shader.render()
         self.screen.blit(pygame.transform.scale(self.game_canvas, self.SCREEN_SIZE), (0, 0))
         pygame.display.flip()
