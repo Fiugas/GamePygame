@@ -22,6 +22,7 @@ pkgs.mkShell {
         libGLU
         mesa
         libepoxy
+        tree
     ];
 
     shellHook = ''
