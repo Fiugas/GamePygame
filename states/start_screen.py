@@ -5,8 +5,8 @@ from states.title_screen import TitleScreen
 class StartScreen(State):
     def __init__(self, game):
         State.__init__(self, game)
-        self.hide_text = True
-        self.blink_count = 0
+        self.is_text_hidden = False
+        self.set_blink_timer()
 
     def update(self, dt, player_actions):
         if player_actions['SELECT']:
@@ -17,14 +17,15 @@ class StartScreen(State):
     def render(self, dt, surface):
         surface.blit(self.game.background, (0, 0))
         self.game.draw_text(surface,'MAZECRAFT', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3))
-        if self.hide_text:
-            self.blink_count += dt
-            if self.blink_count >= 0.75:
-                self.hide_text = False
-                self.blink_count = 0
-        else:
+        self.blink_message(dt)
+        if self.is_text_hidden:
             self.game.draw_text(surface, 'Press Enter to start', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 2))
-            self.blink_count += dt
-            if self.blink_count >= 0.75:
-                self.hide_text = True
-                self.blink_count = 0
+
+    def blink_message(self, dt):
+        self.blink_timer_seconds -= dt
+        if self.blink_timer_seconds < 0:
+            self.is_text_hidden = not self.is_text_hidden
+            self.set_blink_timer()
+
+    def set_blink_timer(self):
+        self.blink_timer_seconds = 0.75
