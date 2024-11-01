@@ -1,9 +1,13 @@
 from states.state import State
 from states.title_screen import TitleScreen
 
+
 class StartScreen(State):
     def __init__(self, game):
         State.__init__(self, game)
+        self.hide_text = False
+        self.blink_count = 0
+
 
     def update(self, dt, player_actions):
         if player_actions['SELECT']:
@@ -12,5 +16,19 @@ class StartScreen(State):
         self.game.reset_player_actions()
 
     def render(self, surface):
-        surface.fill(self.game.colors['BLACK'])
-        self.game.draw_text(surface, 'Pressione Enter para começar', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 2))
+        surface.blit(self.game.background, (0, 0))
+        self.game.draw_text(surface,'MAZECRAFT', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3))
+        
+        if self.hide_text:
+            self.blink_count += 1
+
+            if self.blink_count == 50:
+                self.hide_text = False
+                self.blink_count = 0
+        else:
+            self.game.draw_text(surface, 'Press Enter to start', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 2))
+            self.blink_count += 1
+
+            if self.blink_count == 50:
+                self.hide_text = True
+                self.blink_count = 0
