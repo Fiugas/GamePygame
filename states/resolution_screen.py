@@ -21,7 +21,7 @@ class ResolutionScreen(State):
     def render(self, dt, surface):
         surface.fill(self.game.colors['BLACK'])
         self.game.draw_text(surface, 'Change resolution', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 4))
-        self.game.draw_text(surface, '1. Tela cheia', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3))
+        self.game.draw_text(surface, '1. Fullscreen', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3))
         self.game.draw_text(surface, '2. 1920x1080', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 20))
         self.game.draw_text(surface, '3. 1280x720', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 40))
         self.game.draw_text(surface, '4. 1024x768', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 60))
