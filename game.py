@@ -13,7 +13,7 @@ class Game:
         self.running, self.playing = True, True
         self.shader = Shader(self)
         self.player_actions = {'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'SELECT': False, 'PAUSE': False, 'ONE': False, 'TWO': False, 'THREE': False, 'FOUR': False, 'FIVE': False}
-        self.colors = {'WHITE': (255, 255, 255), 'BLACK': (0, 0, 0)}
+        self.colors = {'WHITE': (255, 255, 255), 'BLACK': (0, 0, 0), 'GRAY': (200, 200, 200), 'BLUE': (0, 0, 255), 'GREEN': (0, 255, 0), 'RED': (255, 0, 0), 'YELLOW': (255, 255, 0)}
         self.dt, self.prev_time = 0, 0
         self.state_stack = []
         self.load_assets()
