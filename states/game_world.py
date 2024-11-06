@@ -1,6 +1,7 @@
 from states.state import State
 from states.pause_screen import PauseScreen
 from components.maze import Maze
+from components.player import Player
 
 class GameWorld(State):
     def __init__(self, game):
