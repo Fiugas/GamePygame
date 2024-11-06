@@ -1,0 +1,320 @@
+:source-highlighter: highlightjs
+= Classe GAME
+:reproducible:
+
+A classe Game é a classe principal do jogo. Ela contém vários métodos importantes para o funcionamento do jogo.
+
+== Métodos
+
+.``__init__``
+****
+O metedo ``__init__`` que é o construtor da classe. Ela é responsável por definir as dimensões da janela e da lógica do jogo, cria uma superfície para renderização e carrega os recursos necessários.
+[source,ruby]
+----
+def __init__(self):
+        pygame.init()
+        info = pygame.display.Info()
+        self.GAME_LOGIC_SIZE, self.SCREEN_SIZE = (1280, 720), (info.current_w, info.current_h)
+        self.NATIVE_SCREEN_SIZE = self.SCREEN_SIZE
+        self.game_canvas = pygame.Surface(self.GAME_LOGIC_SIZE).convert((255, 65280, 16711680, 0))
+        self.screen = pygame.display.set_mode(self.SCREEN_SIZE, pygame.FULLSCREEN | pygame.SCALED | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.OPENGL)
+        self.running, self.playing = True, True
+        self.shader = Shader(self)
+        self.player_actions = {'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'SELECT': False, 'PAUSE': False, 'ONE': False, 'TWO': False, 'THREE': False, 'FOUR': False, 'FIVE': False}
+        self.colors = {'WHITE': (255, 255, 255), 'BLACK': (0, 0, 0)}
+        self.dt, self.prev_time = 0, 0 # Não utilizado no momento
+        self.state_stack = []
+        self.load_assets()
+        self.load_state()
+----
+.GAME_LOGIC_SIZE
+[%collapsible]
+======
+Tamanho lógico do jogo.
+======
+.SCREEN_SIZE
+[%collapsible]
+======
+Tamanho da tela atual.
+======
+.NATIVE_SCREEN_SIZE
+[%collapsible]
+======
+Tamanho da tela nativa.
+======
+.game_canvas
+[%collapsible]
+======
+Superfície do jogo, onde os gráficos são renderizados.
+======
+.screen
+[%collapsible]
+======
+Tela do jogo onde o canvas é exibido.
+======
+.running
+[%collapsible]
+======
+Indica se o jogo está a rodar.
+======
+.playing
+[%collapsible]
+======
+Indica se o jogo está em execução (por exemplo, não em pausa).
+======
+.shader
+[%collapsible]
+======
+Shader utilizado no jogo.
+======
+.player_actions
+[%collapsible]
+======
+Ações do jogador.
+[NOTE]
+====
+Um dicionário contendo as ações do jogador, como 'UP', 'DOWN', 'LEFT', 'RIGHT', etc.
+====
+======
+.colors
+[%collapsible]
+======
+Cores padrão do jogo.
+======
+.dt
+[%collapsible]
+======
+Tempo entre frames, para controle de animação e movimentação.
+======
+.prev_time
+[%collapsible]
+======
+Tempo do último frame.
+======
+.state_stack
+[%collapsible]
+======
+Pilha de estados, usada para controlar o estado do jogo.
+======
+****
+
+.``run``
+****
+Este método contém o loop principal do jogo, onde são gerenciados eventos, atualizações e renderizações.
+[source,ruby]
+----
+def run(self):
+        while self.playing:
+            self.get_dt()
+            self.get_events()
+            self.update()
+            self.render()
+----
+.get_dt
+[%collapsible]
+======
+Método para obter o tempo entre frames.
+======
+.get_events
+[%collapsible]
+======
+Método para obter eventos do jogador.
+======
+.update
+[%collapsible]
+======
+Método para atualizar o jogo.
+======
+.render
+[%collapsible]
+======
+Método para renderizar o jogo.
+[NOTE]
+====
+O loop principal do jogo é executado enquanto a variável ``self.playing`` for verdadeira. Dentro do loop, são chamados os métodos para obter o tempo entre frames, eventos do jogador, atualizar o jogo e renderizar o jogo.
+====
+======
+A classe Game utiliza um sistema de pilha de estados para gerir diferentes partes do jogo facilmente. O uso de shaders e a gestão de ações do jogador também são características interessantes desta implementação.
+****
+
+.``get_events``
+****
+Este método é responsável por obter eventos do jogador, como teclas pressionadas, cliques do mouse, etc.
+[source,ruby]
+----
+def get_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.handle_quit_event()
+            if event.type == pygame.KEYDOWN:
+                self.handle_key_event(event, True)
+            if event.type == pygame.KEYUP:
+                self.handle_key_event(event, False)
+----
+Ela utiliza a função ``pygame.event.get()`` para obter todos os eventos da fila de eventos do pygame. Em seguida, verifica o tipo de evento e chama os métodos apropriados para lidar com eles.
+****
+
+.``handle_quit_event``
+****
+Este método é chamado quando o jogador tenta fechar o jogo.
+[source,ruby]
+----
+def handle_quit_event(self):
+        self.running, self.playing = False, False
+----
+Ele simplesmente define as variáveis ``self.running`` e ``self.playing`` como falsas, o que faz com que o loop principal do jogo seja interrompido.
+****
+
+.``handle_key_event``
+****
+Este método é chamado quando o jogador pressiona ou solta uma tecla.
+[source,ruby]
+----
+def handle_key_event(self, event, is_key_down):
+        key_map = {
+            pygame.K_w: 'UP',
+            pygame.K_s: 'DOWN',
+            pygame.K_a: 'LEFT',
+            pygame.K_d: 'RIGHT',
+            pygame.K_RETURN: 'SELECT',
+            pygame.K_ESCAPE: 'PAUSE',
+            pygame.K_1: 'ONE',
+            pygame.K_2: 'TWO',
+            pygame.K_3: 'THREE',
+            pygame.K_4: 'FOUR',
+            pygame.K_5: 'FIVE'
+        }
+        if event.key in key_map:
+            self.player_actions[key_map[event.key]] = is_key_down
+----
+Ele mapeia as teclas pressionadas para ações do jogador e atualiza o dicionário ``self.player_actions`` de acordo com a tecla pressionada.
+****
+
+.``update``
+****
+Este método é responsável por atualizar o estado do jogo.
+[source,ruby]
+----
+def update(self):
+        self.state_stack[-1].update(self.dt, self.player_actions)
+----
+.self.state_stack[-1].update
+[%collapsible]
+======
+self.state_stack é uma pilha de estados, na qual o índice -1 se refere ao estado atual na pilha.
+Assim, self.state_stack[-1] representa o estado atual do jogo.
+======
+
+.update(self.dt, self.player_actions)
+[%collapsible]
+======
+Chama o método update do estado atual do jogo, passando o tempo entre frames (``dt``) e as ações do jogador como argumentos.
+======
+O objetivo desta função é atualizar o estado atual do jogo. Ela faz isso chamando o método update() do último estado na pilha de estados, passando informações relevantes sobre o tempo e as ações do jogador.
+****
+
+.``render``
+****
+Este método é responsável por renderizar o jogo.
+[source,ruby]
+----
+def render(self):
+        self.state_stack[-1].render(self.game_canvas)
+        self.screen.blit(pygame.transform.scale(self.game_canvas, self.SCREEN_SIZE), (0, 0))
+        pygame.display.flip()
+----
+O método ``render()`` é responsável por renderizar o estado atual do jogo. Ele chama o método ``render()`` do último estado na pilha de estados, passando a superfície do jogo como argumento. Em seguida, redimensiona a superfície do jogo para o tamanho da tela e a exibe na tela.
+****
+
+.``get_dt``
+****
+Este método serve para calcular o delta time (tempo entre frames) do jogo
+[source,ruby]
+----
+def get_dt(self):
+        curr_time = time.time()
+        self.dt = curr_time - self.prev_time
+        self.prev_time = curr_time
+----
+O propósito deste cálculo é permitir que o jogo mantenha um controle preciso do tempo entre frames
+****
+
+.``draw_text``
+****
+Este metodo serve para desenhar texto na superfície de um jogo utilizando Pygame.
+[source,ruby]
+----
+def draw_text(self, surface, text, color, xy):
+        text_surface = self.font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.center = xy
+        surface.blit(text_surface, text_rect)
+----
+O método ``draw_text()`` é utilizado para desenhar texto na superfície do jogo. Ele recebe como argumentos a superfície onde o texto será desenhado, o texto a ser desenhado, a cor do texto e as coordenadas onde o texto será desenhado.
+Este método é útil para exibir mensagens, instruções ou qualquer tipo de texto na interface gráfica do jogo. Pode ser chamada de diferentes estados ou funções dentro do jogo para adicionar texto dinamicamente
+****
+
+.``load_assets``
+****
+Este método é responsável por carregar os recursos necessários para o jogo.
+[source,ruby]
+----
+def load_assets(self):
+        self.assets_dir = os.path.join('assets')
+        self.sprites_dir = os.path.join(self.assets_dir, 'sprites')
+        self.font_dir = os.path.join(self.assets_dir, 'fonts')
+        self.background = pygame.image.load('assets/backgrounds/background_start.png')
+        self.background = pygame.transform.scale(self.background, self.SCREEN_SIZE)
+        self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
+----
+.assets_dir
+[%collapsible]
+======
+Diretório onde os recursos do jogo estão localizados.
+======
+.sprites_dir
+[%collapsible]
+======
+Diretório onde os sprites do jogo estão localizados.
+======
+.font_dir
+[%collapsible]
+======
+Diretório onde as fontes do jogo estão localizadas.
+======
+.background
+[%collapsible]
+======
+Imagem de fundo do jogo.
+======
+.font
+[%collapsible]
+======
+Fonte utilizada para desenhar texto no jogo.
+======
+****
+
+.``load_state``
+****
+Este método é responsável por carregar o estado inicial do jogo.
+[source,ruby]
+----
+def load_state(self):
+        self.state_stack.append(StartScreen(self))
+----
+O método ``load_state()`` é utilizado para carregar o estado inicial do jogo. Ele adiciona o estado ``StartScreen`` à pilha de estados, que é o primeiro estado a ser exibido quando o jogo é iniciado.
+****
+
+.``reset_player_actions``
+****
+Este método reseta todas as ações do jogador para o estado "desligado".
+[source,ruby]
+----
+def reset_player_actions(self):
+        for action in self.player_actions:
+            self.player_actions[action] = False
+----
+O método ``reset_player_actions()`` é utilizado para redefinir todas as ações do jogador para o estado "desligado". Isso é útil quando o jogador solta todas as teclas ou quando uma ação específica é concluída.
+****
+
+
