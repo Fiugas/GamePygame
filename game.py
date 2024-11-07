@@ -79,7 +79,7 @@ class Game:
         self.assets_dir = os.path.join('assets')
         self.sprites_dir = os.path.join(self.assets_dir, 'sprites')
         self.font_dir = os.path.join(self.assets_dir, 'fonts')
-        self.background = pygame.image.load('assets/backgrounds/background_start.png')
+        self.background = pygame.image.load('assets/backgrounds/end_portal.jpg')
         self.background = pygame.transform.scale(self.background, self.SCREEN_SIZE)
         self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
 

@@ -16,5 +16,5 @@ class GameWorld(State):
         self.game.reset_player_actions()
 
     def render(self, dt, surface):
-        surface.fill(self.game.colors['WHITE'])
+        surface.blit(self.game.background, (0, 0))
         self.maze.render(surface, self.cell_size, self.game)
