@@ -20,12 +20,3 @@ class StartScreen(State):
         self.blink_message(dt)
         if self.is_text_hidden:
             self.game.draw_text(surface, 'Press Enter to start', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 2))
-
-    def blink_message(self, dt):
-        self.blink_timer_seconds -= dt
-        if self.blink_timer_seconds < 0:
-            self.is_text_hidden = not self.is_text_hidden
-            self.set_blink_timer()
-
-    def set_blink_timer(self):
-        self.blink_timer_seconds = 0.75
