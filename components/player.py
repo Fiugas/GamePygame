@@ -18,5 +18,5 @@ class Player:
             pass
         self.game.reset_player_actions()
 
-    def draw_player():
+    def render(self, dt, surface):
         pass
