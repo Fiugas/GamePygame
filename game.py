@@ -81,6 +81,8 @@ class Game:
         self.font_dir = os.path.join(self.assets_dir, 'fonts')
         self.background = pygame.image.load('assets/backgrounds/end_portal.jpg')
         self.background = pygame.transform.scale(self.background, self.SCREEN_SIZE)
+        self.wall = pygame.image.load(os.path.join(self.sprites_dir, 'obsidian.jpg'))
+        self.path = pygame.image.load(os.path.join(self.sprites_dir, 'end_stone.png'))
         self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
 
     def load_state(self):
