@@ -10,16 +10,16 @@ class Player:
         # Calcular novos movimentos usando dt para movimento consistente
         if player_actions['UP']:
             print("up")
-            self.y -= (cell_size*5) * dt
+            self.y -= 1
         if player_actions['DOWN']:
             print("down")
-            self.y += (cell_size*5) * dt
+            self.y += 1
         if player_actions['LEFT']:
             print("left")
-            self.x -= (cell_size*5) * dt
+            self.x -= 1
         if player_actions['RIGHT']:
             print("right")
-            self.x += (cell_size*5) * dt
+            self.x += 1
 
     def render(self, surface, cell_size, game):
         self.start_player(surface, cell_size, game)

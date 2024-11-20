@@ -7,7 +7,7 @@ class GameWorld(State):
     def __init__(self, game):
         State.__init__(self, game)
         self.cell_size = 20
-        self.level = 10
+        self.level = 5
         self.maze = Maze(self.level)
         self.player = Player(self.maze, self.game)
 
