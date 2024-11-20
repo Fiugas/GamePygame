@@ -139,7 +139,7 @@ A classe Game utiliza um sistema de pilha de estados para gerir diferentes parte
 
 .``get_events``
 ****
-Este método é responsável por obter eventos do jogador, como teclas pressionadas, cliques do mouse, etc.
+Este método é responsável por obter eventos do jogador, como teclas pressionadas, cliques do rato, etc.
 [source,ruby]
 ----
 def get_events(self):
