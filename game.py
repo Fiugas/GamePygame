@@ -12,12 +12,13 @@ class Game:
         self.screen = pygame.display.set_mode(self.SCREEN_SIZE, pygame.FULLSCREEN | pygame.SCALED | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.OPENGL)
         self.running, self.playing = True, True
         self.shader = Shader(self)
-        self.player_actions = {'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'SELECT': False, 'PAUSE': False,'ONE': False, 'TWO': False, 'THREE': False, 'FOUR': False, 'FIVE': False}
+        self.player_actions = {'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'SELECT': False, 'PAUSE': False}
         self.colors = {'WHITE': (255, 255, 255), 'BLACK': (0, 0, 0), 'GRAY': (200, 200, 200), 'BLUE': (0, 0, 255), 'GREEN': (0, 255, 0), 'RED': (255, 0, 0), 'YELLOW': (255, 255, 0)}
         self.dt, self.prev_time = 0, 0
         self.state_stack = []
         self.load_assets()
         self.load_state()
+        pygame.mouse.set_visible(False)
 
     def run(self):
         while self.playing:
@@ -86,6 +87,7 @@ class Game:
         self.background = pygame.image.load('assets/backgrounds/background_start.png')
         self.background = pygame.transform.scale(self.background, self.SCREEN_SIZE)
         self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
+        self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
 
     def load_state(self):
         self.state_stack.append(StartScreen(self))
