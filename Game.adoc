@@ -8,7 +8,7 @@ A classe Game é a classe principal do jogo. Ela contém vários métodos import
 
 .``__init__``
 ****
-O metedo ``__init__`` que é o construtor da classe. Ela é responsável por definir as dimensões da janela e da lógica do jogo, cria uma superfície para renderização e carrega os recursos necessários.
+O método ``__init__`` é o construtor da classe e o responsável por definir as dimensões da janela e da lógica do jogo, criar uma superfície para renderização e carregar os recursos necessários.
 [source,ruby]
 ----
 def __init__(self):

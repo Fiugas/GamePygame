@@ -1,6 +1,7 @@
 from states.state import State
 from states.pause_screen import PauseScreen
 from components.maze import Maze
+from components.player import Player
 
 class GameWorld(State):
     def __init__(self, game):
@@ -8,6 +9,7 @@ class GameWorld(State):
         self.cell_size = 20
         self.level = 5
         self.maze = Maze(self.level)
+        self.player = Player(self.maze)
 
     def update(self, dt, player_actions):
         if player_actions['PAUSE']:
@@ -18,3 +20,4 @@ class GameWorld(State):
     def render(self, dt, surface):
         surface.fill(self.game.colors['BLACK'])
         self.maze.render(surface, self.cell_size, self.game)
+        self.player.render(surface, self.cell_size, self.game)
