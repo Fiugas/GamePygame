@@ -7,11 +7,12 @@ class GameWorld(State):
     def __init__(self, game):
         State.__init__(self, game)
         self.cell_size = 20
-        self.level = 5
+        self.level = 10
         self.maze = Maze(self.level)
-        self.player = Player(self.maze)
+        self.player = Player(self.maze, self.game)
 
     def update(self, dt, player_actions):
+        self.player.update(dt, player_actions, self.cell_size)
         if player_actions['PAUSE']:
             new_state = PauseScreen(self.game)
             new_state.enter_state()

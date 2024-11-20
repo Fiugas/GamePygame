@@ -83,6 +83,7 @@ class Game:
         self.background = pygame.transform.scale(self.background, self.SCREEN_SIZE)
         self.wall = pygame.image.load(os.path.join(self.sprites_dir, 'obsidian.jpg'))
         self.path = pygame.image.load(os.path.join(self.sprites_dir, 'end_stone.png'))
+        self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
         self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
 
     def load_state(self):
