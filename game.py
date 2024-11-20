@@ -12,7 +12,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.SCREEN_SIZE, pygame.FULLSCREEN | pygame.SCALED | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.OPENGL)
         self.running, self.playing = True, True
         self.shader = Shader(self)
-        self.player_actions = {'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'SELECT': False, 'PAUSE': False, 'ONE': False, 'TWO': False, 'THREE': False, 'FOUR': False, 'FIVE': False}
+        self.player_actions = {'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'SELECT': False, 'PAUSE': False,'ONE': False, 'TWO': False, 'THREE': False, 'FOUR': False, 'FIVE': False}
         self.colors = {'WHITE': (255, 255, 255), 'BLACK': (0, 0, 0), 'GRAY': (200, 200, 200), 'BLUE': (0, 0, 255), 'GREEN': (0, 255, 0), 'RED': (255, 0, 0), 'YELLOW': (255, 255, 0)}
         self.dt, self.prev_time = 0, 0
         self.state_stack = []
@@ -46,6 +46,10 @@ class Game:
             pygame.K_d: 'RIGHT',
             pygame.K_RETURN: 'SELECT',
             pygame.K_ESCAPE: 'PAUSE',
+            pygame.K_UP: 'UP',
+            pygame.K_DOWN: 'DOWN',
+            pygame.K_LEFT: 'LEFT',
+            pygame.K_RIGHT: 'RIGHT',
             pygame.K_1: 'ONE',
             pygame.K_2: 'TWO',
             pygame.K_3: 'THREE',
