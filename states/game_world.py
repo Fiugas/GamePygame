@@ -9,13 +9,16 @@ class GameWorld(State):
         self.cell_size = 20
         self.level = 5
         self.maze = Maze(self.level)
+        self.player = Player(self.maze, self.game)
 
     def update(self, dt, player_actions):
+        self.player.update(dt, player_actions, self.cell_size)
         if player_actions['PAUSE']:
             new_state = PauseScreen(self.game)
             new_state.enter_state()
         self.game.reset_player_actions()
 
     def render(self, dt, surface):
-        surface.fill(self.game.colors['WHITE'])
+        surface.fill(self.game.colors['BLACK'])
         self.maze.render(surface, self.cell_size, self.game)
+        self.player.render(surface, self.cell_size, self.game)

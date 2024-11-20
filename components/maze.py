@@ -70,9 +70,10 @@ class Maze:
             for x in range(self.width):
                 rect = pygame.Rect(x * cell_size, y * cell_size, cell_size, cell_size)
                 if self.grid[y][x] == 1:
-                    pygame.draw.rect(surface, game.colors['BLACK'], rect)  # Dark color for walls
+                    # Redimensionar e desenhar o sprite da parede
+                    surface.blit(pygame.transform.scale(game.wall, (cell_size, cell_size)), rect)
                 else:
-                    pygame.draw.rect(surface, game.colors['GRAY'], rect)  # Light color for paths
+                    surface.blit(pygame.transform.scale(game.path, (cell_size, cell_size)), rect)  # Light color for paths
 
     def draw_borders(self, surface, cell_size, game):
         # Determine which sides need borders by checking for open paths

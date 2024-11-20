@@ -1,22 +1,35 @@
 import pygame
-
 class Player:
-    def __init__(self):
-        pass
+    def __init__(self, maze, game):
+        # Inicializa o player na posição inicial do labirinto
+        self.x = maze.start[0]  # Posição X inicial
+        self.y = maze.start[1]  # Posição Y inicial
+        self.game = game
 
-
-
-
-    def update(self, dt, player_actions):
+    def update(self, dt, player_actions, cell_size):
+        # Calcular novos movimentos usando dt para movimento consistente
         if player_actions['UP']:
-            pass
+            print("up")
+            self.y -= 1
         if player_actions['DOWN']:
-            pass
+            print("down")
+            self.y += 1
         if player_actions['LEFT']:
-            pass
+            print("left")
+            self.x -= 1
         if player_actions['RIGHT']:
-            pass
-        self.game.reset_player_actions()
+            print("right")
+            self.x += 1
 
-    def render(self, dt, surface):
-        pass
+    def render(self, surface, cell_size, game):
+        self.start_player(surface, cell_size, game)
+
+    def start_player(self, surface, cell_size, game):
+        # Desenha o player
+        player_rect = pygame.Rect(
+            self.x * cell_size,  # Posição X na tela
+            self.y * cell_size,  # Posição Y na tela
+            cell_size,           # Largura
+            cell_size            # Altura
+        )
+        pygame.draw.rect(surface, game.colors['RED'], player_rect)
