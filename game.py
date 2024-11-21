@@ -1,10 +1,13 @@
 import pygame, os, time
 from shaders.crt_shader import Shader
 from states.start_screen import StartScreen
+from pygame import mixer
+
 
 class Game:
     def __init__(self):
         pygame.init()
+        mixer.init()
         info = pygame.display.Info()
         self.GAME_LOGIC_SIZE, self.SCREEN_SIZE = (1280, 720), (info.current_w, info.current_h)
         self.NATIVE_SCREEN_SIZE = self.SCREEN_SIZE
@@ -19,6 +22,7 @@ class Game:
         self.load_assets()
         self.load_state()
         pygame.mouse.set_visible(False)
+        self.change_music()
 
     def run(self):
         while self.playing:
@@ -51,11 +55,6 @@ class Game:
             pygame.K_DOWN: 'DOWN',
             pygame.K_LEFT: 'LEFT',
             pygame.K_RIGHT: 'RIGHT',
-            pygame.K_1: 'ONE',
-            pygame.K_2: 'TWO',
-            pygame.K_3: 'THREE',
-            pygame.K_4: 'FOUR',
-            pygame.K_5: 'FIVE'
         }
         if event.key in key_map:
             self.player_actions[key_map[event.key]] = is_key_down
@@ -84,6 +83,7 @@ class Game:
         self.assets_dir = os.path.join('assets')
         self.sprites_dir = os.path.join(self.assets_dir, 'sprites')
         self.font_dir = os.path.join(self.assets_dir, 'fonts')
+        self.effects_dir = os.path.join(self.assets_dir, 'effects')
         self.background = pygame.image.load('assets/backgrounds/end_portal.jpg')
         self.background = pygame.transform.scale(self.background, self.SCREEN_SIZE)
         self.wall = pygame.image.load(os.path.join(self.sprites_dir, 'obsidian.jpg'))
@@ -91,9 +91,25 @@ class Game:
         self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
         self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
         self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
+        self.music_tracks = [
+            os.path.join(self.effects_dir, '[No Copyright Music] ko0x - Galaxy Guppy [Chiptune].mp3'),# Add more music track paths here
+            os.path.join(self.effects_dir, 'Into the Maze.mp3'),
+            os.path.join(self.effects_dir, '[No Copyright Music] Kubbi - Ember [Chiptune].mp3'),
+        ]
+        self.current_track_index = 0
+
 
     def load_state(self):
         self.state_stack.append(StartScreen(self))
+
+    def change_music(self):
+        self.current_track_index = (self.current_track_index + 1) % len(self.music_tracks)
+        mixer.music.load(self.music_tracks[self.current_track_index])
+        mixer.music.play(-1)
+
+    def adjust_volume(self, volume):
+        # Volume should be between 0.0 and 1.0
+        mixer.music.set_volume(max(0.0, min(1.0, volume)))
 
     def reset_player_actions(self):
         for action in self.player_actions:

@@ -2,6 +2,8 @@ from states.state import State
 from states.pause_screen import PauseScreen
 from states.nextlevel_screen import Nextlevelscreen
 from components.maze import Maze
+from components.player import Player
+
 
 class GameWorld(State):
     def __init__(self, game):
