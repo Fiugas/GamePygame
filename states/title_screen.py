@@ -42,4 +42,3 @@ class TitleScreen(State):
         self.game.draw_text(surface, 'Score', self.game.colors['GRAY'] if self.menu_cursor != 3 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 80))
         self.game.draw_text(surface, 'Exit game', self.game.colors['GRAY'] if self.menu_cursor != 4 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 100))
 
-    
