@@ -10,16 +10,16 @@ class Player:
 
 
     def update(self, player_actions, maze):
-        # Calcular novos movimentos usando dt para movimento consistente
-        if player_actions['UP'] and not maze.is_wall(self.x, self.y - 1):
-            self.y -= 1
-        if player_actions['DOWN'] and not maze.is_wall(self.x, self.y + 1):
-            self.y += 1
-        if player_actions['LEFT'] and not maze.is_wall(self.x - 1, self.y):
-            self.x -= 1
-        if player_actions['RIGHT'] and not maze.is_wall(self.x + 1, self.y):
-            self.x += 1
         self.collision.check_key_collision(self.x, self.y)
+        # Calcular novos movimentos usando dt para movimento consistente
+        if player_actions['UP'] and not self.collision.check_wall_collision(self.x, self.y - 1, maze):
+            self.y -= 1
+        if player_actions['DOWN'] and not self.collision.check_wall_collision(self.x, self.y + 1, maze):
+            self.y += 1
+        if player_actions['LEFT'] and not self.collision.check_wall_collision(self.x - 1, self.y, maze):
+            self.x -= 1
+        if player_actions['RIGHT'] and not self.collision.check_wall_collision(self.x + 1, self.y, maze):
+            self.x += 1
 
     def render(self, surface, cell_size, game):
         self.start_player(surface, cell_size, game)
@@ -32,4 +32,4 @@ class Player:
             cell_size,           # Largura
             cell_size            # Altura
         )
-        pygame.draw.rect(surface, game.colors['RED'], player_rect)
+        surface.blit(pygame.transform.scale(game.player, (cell_size, cell_size)), player_rect)
