@@ -33,3 +33,8 @@ class Player:
             cell_size            # Altura
         )
         surface.blit(pygame.transform.scale(game.player, (cell_size, cell_size)), player_rect)
+
+    def update_maze(self, maze):
+        self.collision = collision(maze.key, maze.exit)
+        self.x = maze.start[0]
+        self.y = maze.start[1]
