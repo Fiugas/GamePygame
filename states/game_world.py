@@ -20,10 +20,9 @@ class GameWorld(State):
         if self.maze.key.collected and self.player.collision.check_exit_collision(self.player.x, self.player.y):
             new_state = Nextlevelscreen(self.game)
             self.level += 2
-            self.maze = Maze(self.level)
+            self.maze.generate_maze(self.level)
             self.player.update_maze(self.maze)
             new_state.enter_state()
-            print("level: ", self.level)
         self.game.reset_player_actions()
 
     def render(self, dt, surface):

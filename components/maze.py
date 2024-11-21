@@ -4,13 +4,13 @@ from components.entities import Key
 class Maze:
     def __init__(self, level):
         self.position_type = {'OPEN': 0, 'WALL': 1}
+        self.start, self.exit, self.key = None, None, None
+        self.generate_maze(level)
+
+    def generate_maze(self, level):
         self.width = 10 + (level - 1) * 5
         self.height = 10 + (level - 1) * 5
         self.grid = [[1 for _ in range(self.width)] for _ in range(self.height)]  # Initialize all cells as walls
-        self.start, self.exit, self.key = None, None, None
-        self.generate_maze()
-
-    def generate_maze(self):
         # Generate a random start position
         self.start = self.random_position('WALL')
         # Generate maze paths using DFS
