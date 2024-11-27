@@ -15,4 +15,4 @@ class Key(Entity):
     def render(self, surface, cell_size, game):
         if not self.collected:
             rect = pygame.Rect(self.position[0] * cell_size, self.position[1] * cell_size, cell_size, cell_size)
-            pygame.draw.rect(surface, game.colors['YELLOW'], rect)
+            surface.blit(pygame.transform.scale(game.key, (cell_size, cell_size)), rect)

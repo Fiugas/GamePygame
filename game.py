@@ -89,8 +89,11 @@ class Game:
         self.wall = pygame.image.load(os.path.join(self.sprites_dir, 'obsidian.jpg'))
         self.path = pygame.image.load(os.path.join(self.sprites_dir, 'end_stone.png'))
         self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
+        self.key= pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Egg.jpg'))
         self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
         self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
+        self.exit = pygame.image.load('assets/backgrounds/end_portal.jpg')
+        self.exit.set_alpha(200)
         self.music_tracks = [
             os.path.join(self.effects_dir, 'ko0x - Galaxy Guppy [Chiptune].mp3'),# Add more music track paths here
             os.path.join(self.effects_dir, 'Into the Maze.mp3'),
