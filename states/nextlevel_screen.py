@@ -16,8 +16,8 @@ class Nextlevelscreen(State):
         if option == 'Next level':
             self.exit_state()
         if option == 'Exit game':
-            self.game.running, self.game.playing = False, False
-        self.game.reset_player_actions()
+            self.exit_state()
+            self.exit_state()
 
     def render(self, dt, surface):
         surface.blit(self.game.background, (0, 0))
