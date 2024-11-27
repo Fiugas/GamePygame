@@ -11,7 +11,7 @@ class Player:
 
     def update(self, player_actions, maze):
         self.collision.check_key_collision(self.x, self.y)
-        # Calcular novos movimentos usando dt para movimento consistente
+        # Movimento contínuo com verificação de colisão
         if player_actions['UP'] and not self.collision.check_wall_collision(self.x, self.y - 1, maze):
             self.y -= 1
         if player_actions['DOWN'] and not self.collision.check_wall_collision(self.x, self.y + 1, maze):

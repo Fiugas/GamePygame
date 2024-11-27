@@ -134,4 +134,4 @@ class Maze:
 
         # Draw the exit position
         exit_rect = pygame.Rect(self.exit[0] * cell_size, self.exit[1] * cell_size, cell_size, cell_size)
-        pygame.draw.rect(surface, game.colors['BLUE'], exit_rect)  # Blue color for the exit
+        surface.blit(pygame.transform.scale(game.exit, (cell_size, cell_size)), exit_rect)  # Blue color for the exit
