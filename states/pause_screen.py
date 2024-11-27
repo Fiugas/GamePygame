@@ -36,7 +36,9 @@ class PauseScreen(State):
     def render(self, dt, surface):
         surface.blit(self.game.background, (0, 0))
         self.game.draw_text(surface, 'Game paused', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 4))
-        self.game.draw_text(surface, 'Press ESC to resume', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3))
+        self.blink_message(dt)
+        if self.is_text_hidden:
+            self.game.draw_text(surface, 'Press ESC to resume', self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3))
         self.game.draw_text(surface, 'Exit to menu', self.game.colors['GRAY'] if self.menu_cursor != 0 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 40))
         self.game.draw_text(surface, 'Change resolution', self.game.colors['GRAY'] if self.menu_cursor != 1 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 60))
         self.game.draw_text(surface, 'Configure Sound', self.game.colors['GRAY'] if self.menu_cursor != 2 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 80))

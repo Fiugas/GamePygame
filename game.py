@@ -92,9 +92,16 @@ class Game:
         self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
         self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
         self.music_tracks = [
-            os.path.join(self.effects_dir, '[No Copyright Music] ko0x - Galaxy Guppy [Chiptune].mp3'),# Add more music track paths here
+            os.path.join(self.effects_dir, 'ko0x - Galaxy Guppy [Chiptune].mp3'),# Add more music track paths here
             os.path.join(self.effects_dir, 'Into the Maze.mp3'),
-            os.path.join(self.effects_dir, '[No Copyright Music] Kubbi - Ember [Chiptune].mp3'),
+            os.path.join(self.effects_dir, 'Kubbi - Ember [Chiptune].mp3'),
+            os.path.join(self.effects_dir, 'Daniel Fridell, Sven Lindvall - Trail to Dolores.mp3'),
+            os.path.join(self.effects_dir, 'NEON DRIVE by Ghostrifter.mp3'),
+            os.path.join(self.effects_dir, 'Ava Low - Through the Prism.mp3'),
+            os.path.join(self.effects_dir, 'd4vd - Remember Me.mp3'),
+            os.path.join(self.effects_dir, 'Royal & the Serpent - Wasteland.mp3'),
+            os.path.join(self.effects_dir, 'Stromae, Pomme - Ma Meilleure Ennemie English.mp3'),
+            os.path.join(self.effects_dir, 'To Ashes and Blood.mp3'),
         ]
         self.current_track_index = 0
 
@@ -104,8 +111,10 @@ class Game:
 
     def change_music(self):
         self.current_track_index = (self.current_track_index + 1) % len(self.music_tracks)
+        current_track = os.path.basename(self.music_tracks[self.current_track_index])
         mixer.music.load(self.music_tracks[self.current_track_index])
         mixer.music.play(-1)
+        return current_track
 
     def adjust_volume(self, volume):
         # Volume should be between 0.0 and 1.0
