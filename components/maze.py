@@ -1,6 +1,7 @@
 import pygame, random
 from components.entities import Key
 
+
 class Maze:
     def __init__(self, level):
         self.position_type = {'OPEN': 0, 'WALL': 1}
@@ -58,11 +59,17 @@ class Maze:
             if self.grid[y][x] == target_value:
                 return (x, y)
 
-    def render(self, surface, cell_size, game):
+    def render(self, surface, cell_size, game, visibility_check=None, player_x=None, player_y=None):
         self.draw_maze(surface, cell_size, game)
         self.draw_borders(surface, cell_size, game)
-        self.key.render(surface, cell_size, game)
-        self.draw_start_and_exit(surface, cell_size, game)
+    
+        if visibility_check is None or visibility_check(self.key.position[0], self.key.position[1], player_x, player_y):
+            self.key.render(surface, cell_size, game)
+    
+        if visibility_check is None or visibility_check(self.exit[0], self.exit[1], player_x, player_y):
+            self.draw_maze(surface, cell_size, game)
+            self.draw_borders(surface, cell_size, game)
+            self.draw_start_and_exit(surface, cell_size, game)
 
     def draw_maze(self, surface, cell_size, game):
         # Draw the base maze (walls and paths)
