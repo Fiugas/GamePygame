@@ -8,18 +8,21 @@ class Player:
         self.game = game
         self.collision = collision(maze.key, maze.exit)
 
-
     def update(self, player_actions, maze):
         self.collision.check_key_collision(self.x, self.y)
-        # Movimento contínuo com verificação de colisão
-        if player_actions['UP'] and not self.collision.check_wall_collision(self.x, self.y - 1, maze):
-            self.y -= 1
-        if player_actions['DOWN'] and not self.collision.check_wall_collision(self.x, self.y + 1, maze):
-            self.y += 1
-        if player_actions['LEFT'] and not self.collision.check_wall_collision(self.x - 1, self.y, maze):
-            self.x -= 1
-        if player_actions['RIGHT'] and not self.collision.check_wall_collision(self.x + 1, self.y, maze):
-            self.x += 1
+        self.move_player(player_actions, maze)
+
+    def move_player(self, player_actions, maze):
+        movements = {
+            'UP': (0, -1),
+            'DOWN': (0, 1),
+            'LEFT': (-1, 0),
+            'RIGHT': (1, 0)
+        }
+        for action, (dx, dy) in movements.items():
+            if player_actions[action] and not self.collision.check_wall_collision(self.x + dx, self.y + dy, maze):
+                self.x += dx
+                self.y += dy
 
     def render(self, surface, cell_size, game):
         self.start_player(surface, cell_size, game)
