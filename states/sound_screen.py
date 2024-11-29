@@ -7,30 +7,24 @@ class ConfigureSound(State):
         State.__init__(self, game)
         self.menu_options = {0: 'Volume', 1: 'Change Music', 2: 'Back'}
         self.menu_cursor = 0
-        self.volume = 0.5  # Default volume at 50%
+        self.volume = pygame.mixer.music.get_volume()  # Default volume at 50%
         self.is_music_paused = False
         self.current_music = os.path.basename(self.game.music_tracks[self.game.current_track_index])
     
     def update(self, dt, player_actions):
         self.update_cursor(player_actions)
-        
-        if self.menu_cursor == 0:
-            if player_actions['LEFT']:
-                self.volume = max(0.0, self.volume - 0.1)
-                self.game.adjust_volume(self.volume)
-            if player_actions['RIGHT']:
-                self.volume = min(1.0, self.volume + 0.1)
-                self.game.adjust_volume(self.volume)
-        if self.menu_cursor == 1:
-            if player_actions['LEFT']:
-                self.change_music_track(-1)
-            elif player_actions['RIGHT']:
-                self.change_music_track(1)
+        if self.menu_cursor == 0 and (player_actions['LEFT'] or player_actions['RIGHT']):
+            self.volume = max(0.0, min(1.0, round((self.volume + (0.1 if player_actions['RIGHT'] else -0.1)) * 10) / 10))
+            self.game.adjust_volume(self.volume)
+        elif self.menu_cursor == 1 and (player_actions['LEFT'] or player_actions['RIGHT']):
+            direction = 1 if player_actions['RIGHT'] else -1
+            self.change_music_track(direction)
         if player_actions['SELECT']:
+            if self.menu_cursor == 1:
                 self.toggle_music_pause()
-        if player_actions['SELECT']:
-            selected_option = self.menu_options[self.menu_cursor]
-            self.handle_selected_option(selected_option)
+            else:
+                selected_option = self.menu_options[self.menu_cursor]
+                self.handle_selected_option(selected_option)
         self.game.reset_player_actions()
 
     def change_music_track(self, direction):
@@ -45,13 +39,12 @@ class ConfigureSound(State):
         return current_track
 
     def toggle_music_pause(self):
-        if pygame.mixer.music.get_busy():
-            if self.is_music_paused:
-                pygame.mixer.music.unpause()
-                self.is_music_paused = False
-            else:
-                pygame.mixer.music.pause()
-                self.is_music_paused = True
+        if self.is_music_paused:
+            pygame.mixer.music.unpause()
+            self.is_music_paused = False
+        else:
+            pygame.mixer.music.pause()
+            self.is_music_paused = True
 
     def handle_selected_option(self, option):
         if option == 'Change Music':

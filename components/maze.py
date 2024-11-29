@@ -59,28 +59,40 @@ class Maze:
             if self.grid[y][x] == target_value:
                 return (x, y)
 
-    def render(self, surface, cell_size, game, visibility_check=None, player_x=None, player_y=None):
-        self.draw_maze(surface, cell_size, game)
-        self.draw_borders(surface, cell_size, game)
-    
-        if visibility_check is None or visibility_check(self.key.position[0], self.key.position[1], player_x, player_y):
-            self.key.render(surface, cell_size, game)
-    
-        if visibility_check is None or visibility_check(self.exit[0], self.exit[1], player_x, player_y):
-            self.draw_maze(surface, cell_size, game)
-            self.draw_borders(surface, cell_size, game)
-            self.draw_start_and_exit(surface, cell_size, game)
+    def render(self, surface, cell_size, game, visibility_check=None, player = None, camera=None):               
+        self.draw_maze(surface, cell_size, visibility_check, player, game, camera)
+        self.draw_borders(surface, cell_size, game)              
+        # Render key and exit with camera transformation
+        if camera:
+            key_screen_x, key_screen_y = camera.apply(self.key.position[0], self.key.position[1])
+            exit_screen_x, exit_screen_y = camera.apply(self.exit[0], self.exit[1])
+        else:
+            key_screen_x = self.key.position[0] * cell_size
+            key_screen_y = self.key.position[1] * cell_size
+            exit_screen_x = self.exit[0] * cell_size
+            exit_screen_y = self.exit[1] * cell_size
+        
+        # Render key and exit if in view range
+        if visibility_check is None or visibility_check(self.key.position[0], self.key.position[1], player.x, player.y):
+            surface.blit(game.key, (key_screen_x, key_screen_y))
+        
+        if visibility_check is None or visibility_check(self.exit[0], self.exit[1], player.x, player.y):
+            surface.blit(game.exit, (exit_screen_x, exit_screen_y))
 
-    def draw_maze(self, surface, cell_size, game):
+    def draw_maze(self, surface, cell_size, visibility_check,  player, game, camera):
         # Draw the base maze (walls and paths)
         for y in range(self.height):
             for x in range(self.width):
-                rect = pygame.Rect(x * cell_size, y * cell_size, cell_size, cell_size)
+                screen_x = x * cell_size
+                screen_y = y * cell_size
+                if camera:
+                    screen_x, screen_y = camera.apply(x, y)
+                if visibility_check and not visibility_check(x, y, player.x, player.y):
+                    continue
                 if self.grid[y][x] == 1:
-                    # Redimensionar e desenhar o sprite da parede
-                    surface.blit(pygame.transform.scale(game.wall, (cell_size, cell_size)), rect)
+                    surface.blit(pygame.transform.scale(game.wall, (cell_size, cell_size)), (screen_x, screen_y))
                 else:
-                    surface.blit(pygame.transform.scale(game.path, (cell_size, cell_size)), rect)  # Light color for paths
+                    surface.blit(pygame.transform.scale(game.path, (cell_size, cell_size)), (screen_x, screen_y))  # Light color for paths
 
     def draw_borders(self, surface, cell_size, game):
         # Determine which sides need borders by checking for open paths

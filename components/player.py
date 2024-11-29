@@ -24,18 +24,21 @@ class Player:
                 self.x += dx
                 self.y += dy
 
-    def render(self, surface, cell_size, game):
-        self.start_player(surface, cell_size, game)
+    def render(self, surface, cell_size, game, camera=None):
+        # Use camera's apply method if provided
+        self.start_player(surface, cell_size, game, camera)
+        
 
-    def start_player(self, surface, cell_size, game):
+    def start_player(self, surface, cell_size, game, camera=None):
         # Desenha o player
-        player_rect = pygame.Rect(
-            self.x * cell_size,  # Posição X na tela
-            self.y * cell_size,  # Posição Y na tela
-            cell_size,           # Largura
-            cell_size            # Altura
-        )
-        surface.blit(pygame.transform.scale(game.player, (cell_size, cell_size)), player_rect)
+        screen_x = self.x * cell_size
+        screen_y = self.y * cell_size
+        
+        if camera:
+            screen_x, screen_y = camera.apply(self.x, self.y)
+        
+        # Render player
+        surface.blit(pygame.transform.scale(game.player, (cell_size, cell_size)),pygame.Rect(screen_x, screen_y, cell_size, cell_size))
 
     def update_maze(self, maze):
         self.collision = collision(maze.key, maze.exit)

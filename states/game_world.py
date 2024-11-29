@@ -36,7 +36,7 @@ class GameWorld(State):
         surface.fill(self.game.colors['BLACK'])
         self.maze.render(surface, self.cell_size, self.game, 
                     visibility_check=self.camera.is_in_view_range, 
-                    player_x=self.player.x, 
-                    player_y=self.player.y)
-        self.player.render(surface, self.cell_size, self.game)
+                    player= self.player,
+                    camera=self.camera)
+        self.player.render(surface, self.cell_size, self.game, camera=self.camera)
         self.camera.apply_fog(surface, self.player.x, self.player.y)
