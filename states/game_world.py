@@ -9,7 +9,7 @@ from components.camera import Camera
 class GameWorld(State):
     def __init__(self, game):
         State.__init__(self, game)
-        self.cell_size = 20
+        self.cell_size = 45
         self.level = 1
         self.maze = Maze(self.level)
         self.maze.cell_size = self.cell_size 
