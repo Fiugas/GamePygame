@@ -33,10 +33,8 @@ class Player:
         # Desenha o player
         screen_x = self.x * cell_size
         screen_y = self.y * cell_size
-        
         if camera:
             screen_x, screen_y = camera.apply(self.x, self.y)
-        
         # Render player
         surface.blit(pygame.transform.scale(game.player, (cell_size, cell_size)),pygame.Rect(screen_x, screen_y, cell_size, cell_size))
 

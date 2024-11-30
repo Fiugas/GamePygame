@@ -2,7 +2,7 @@ import pygame
 import math
 
 class Camera:
-    def __init__(self, maze, view_range=5):
+    def __init__(self, maze, view_range=3):
         self.maze = maze
         self.view_range = view_range
         self.fog_surface = None
@@ -11,8 +11,8 @@ class Camera:
         self.create_fog_surface()
 
     def update(self, player_x, player_y):
-        center_x = pygame.display.get_surface().get_width() // (2 * self.maze.cell_size)
-        center_y = pygame.display.get_surface().get_height() // (2 * self.maze.cell_size)
+        center_x = pygame.display.get_surface().get_width() // (2.9 * self.maze.cell_size)
+        center_y = pygame.display.get_surface().get_height() // (2.9 * self.maze.cell_size)
         self.offset_x = player_x - center_x
         self.offset_y = player_y - center_y
 

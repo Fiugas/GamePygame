@@ -59,25 +59,12 @@ class Maze:
             if self.grid[y][x] == target_value:
                 return (x, y)
 
-    def render(self, surface, cell_size, game, visibility_check=None, player = None, camera=None):               
+    def render(self, surface, cell_size, game, visibility_check=None, player = None, camera=None):
         self.draw_maze(surface, cell_size, visibility_check, player, game, camera)
-        self.draw_borders(surface, cell_size, game)              
+        self.draw_borders(surface, cell_size, game)
+        self.key.render(surface, cell_size, game, camera, visibility_check, player)
         # Render key and exit with camera transformation
-        if camera:
-            key_screen_x, key_screen_y = camera.apply(self.key.position[0], self.key.position[1])
-            exit_screen_x, exit_screen_y = camera.apply(self.exit[0], self.exit[1])
-        else:
-            key_screen_x = self.key.position[0] * cell_size
-            key_screen_y = self.key.position[1] * cell_size
-            exit_screen_x = self.exit[0] * cell_size
-            exit_screen_y = self.exit[1] * cell_size
-        
-        # Render key and exit if in view range
-        if visibility_check is None or visibility_check(self.key.position[0], self.key.position[1], player.x, player.y):
-            surface.blit(game.key, (key_screen_x, key_screen_y))
-        
-        if visibility_check is None or visibility_check(self.exit[0], self.exit[1], player.x, player.y):
-            surface.blit(game.exit, (exit_screen_x, exit_screen_y))
+        self.draw_start_and_exit(surface, cell_size, game, camera, visibility_check, player)
 
     def draw_maze(self, surface, cell_size, visibility_check,  player, game, camera):
         # Draw the base maze (walls and paths)
@@ -146,11 +133,18 @@ class Maze:
             corner_rect = pygame.Rect(self.width * cell_size, self.height * cell_size, cell_size, cell_size)
             pygame.draw.rect(surface, game.colors['BLACK'], corner_rect)
 
-    def draw_start_and_exit(self, surface, cell_size, game):
-        # Draw the start position
-        start_rect = pygame.Rect(self.start[0] * cell_size, self.start[1] * cell_size, cell_size, cell_size)
-        pygame.draw.rect(surface, game.colors['GREEN'], start_rect)  # Green color for the start
+    def draw_start_and_exit(self, surface, cell_size, game, camera, visibility_check, player):
+        # Render key and exit with camera transformation
+        if camera:
+            Start_screen_x, Start_screen_y = camera.apply(self.start[0], self.start[1])
+            exit_screen_x, exit_screen_y = camera.apply(self.exit[0], self.exit[1])
+        else:
+            Start_screen_x = self.start[0] * cell_size
+            Start_screen_y = self.start[1] * cell_size
+            exit_screen_x = self.exit[0] * cell_size
+            exit_screen_y = self.exit[1] * cell_size
 
-        # Draw the exit position
-        exit_rect = pygame.Rect(self.exit[0] * cell_size, self.exit[1] * cell_size, cell_size, cell_size)
-        surface.blit(pygame.transform.scale(game.exit, (cell_size, cell_size)), exit_rect)  # Blue color for the exit
+        if visibility_check is None or visibility_check(self.exit[0], self.exit[1], player.x, player.y):
+            surface.blit(pygame.transform.scale(game.exit, (cell_size, cell_size)), (exit_screen_x, exit_screen_y))
+        if visibility_check is None or visibility_check(self.start[0], self.start[1], player.x, player.y):
+            pygame.draw.rect(surface, game.colors['GREEN'], pygame.Rect(Start_screen_x, Start_screen_y, cell_size, cell_size))  # Green color for the start
