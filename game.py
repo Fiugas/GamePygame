@@ -1,150 +1,132 @@
-import pygame
-from player import Player
-from maze import Maze
-from assets import draw_start_screen, draw_pause_screen, draw_menu_screen, draw_victory_screen
+import pygame, os, time
 from shaders.crt_shader import Shader
+from states.start_screen import StartScreen
+from pygame import mixer
 
 
 class Game:
     def __init__(self):
         pygame.init()
+        mixer.init()
         info = pygame.display.Info()
-        self.GAME_LOGIC_SIZE, self.SCREEN_SIZE = (1500, 720), (info.current_w, info.current_h)
-        self.NATIVE_SCREEN_SIZE = self.SCREEN_SIZEa
+        self.GAME_LOGIC_SIZE, self.SCREEN_SIZE = (1280, 720), (info.current_w, info.current_h)
+        self.NATIVE_SCREEN_SIZE = self.SCREEN_SIZE
+        self.game_canvas = pygame.Surface(self.GAME_LOGIC_SIZE).convert((255, 65280, 16711680, 0))
+        self.screen = pygame.display.set_mode(self.SCREEN_SIZE, pygame.FULLSCREEN | pygame.SCALED | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.OPENGL)
+        self.running, self.playing = True, True
+        self.shader = Shader(self)
+        self.player_actions = {'UP': False, 'DOWN': False, 'LEFT': False, 'RIGHT': False, 'SELECT': False, 'PAUSE': False}
+        self.colors = {'WHITE': (255, 255, 255), 'BLACK': (0, 0, 0), 'GRAY': (200, 200, 200), 'BLUE': (0, 0, 255), 'GREEN': (0, 255, 0), 'RED': (255, 0, 0), 'YELLOW': (255, 255, 0)}
+        self.dt, self.prev_time = 0, 0
+        self.state_stack = []
+        self.load_assets()
+        self.load_state()
+        pygame.mouse.set_visible(False)
+        self.change_music()
 
-# Definindo as cores
-YELLOW = (255, 255, 0)
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
+    def run(self):
+        while self.playing:
+            self.get_dt()
+            self.get_events()
+            self.update()
+            self.render()
 
-# Dimensões da tela
-WIDTH, HEIGHT = 1500, 720
+    def get_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.handle_quit_event()
+            if event.type == pygame.KEYDOWN:
+                self.handle_key_event(event, True)
+            if event.type == pygame.KEYUP:
+                self.handle_key_event(event, False)
 
-# Configurações da tela
-pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
-pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
-pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
+    def handle_quit_event(self):
+        self.running, self.playing = False, False
 
-# Inicializa o shader
-''' Alterar a linha abaixo e acabar a classe Game '''
-shader = Shader(game= screen) 
+    def handle_key_event(self, event, is_key_down):
+        key_map = {
+            pygame.K_w: 'UP',
+            pygame.K_s: 'DOWN',
+            pygame.K_a: 'LEFT',
+            pygame.K_d: 'RIGHT',
+            pygame.K_RETURN: 'SELECT',
+            pygame.K_ESCAPE: 'PAUSE',
+            pygame.K_UP: 'UP',
+            pygame.K_DOWN: 'DOWN',
+            pygame.K_LEFT: 'LEFT',
+            pygame.K_RIGHT: 'RIGHT',
+        }
+        if event.key in key_map:
+            self.player_actions[key_map[event.key]] = is_key_down
 
-# Dimensões das células do labirinto
-cell_size = 35  # Tamanho das células no labirinto
-draw_size = 100  # Tamanho usado para desenhar o jogador e a tela
+    def update(self):
+        self.state_stack[-1].update(self.dt, self.player_actions)
 
-# Dimensões do labirinto
-maze_width = WIDTH // cell_size
-maze_height = HEIGHT // cell_size
-
-# Cria o labirinto
-maze = Maze(maze_width, maze_height, cell_size, draw_size)
-
-# Configura o relógio para controlar a taxa de quadros
-clock = pygame.time.Clock()
-
-# Estados do jogo
-START, PLAYING, PAUSED, MENU, VICTORY = "start", "playing", "paused", "menu", "victory"
-game_state = START
-
-# Cria o jogador
-player = Player(1, 1, draw_size)
-has_key = False  # Variável para rastrear se a chave foi coletada
-
-# Inicializa a posição da chave
-key_pos = maze.generate_key_position()
-
-
-# Função para desenhar a chave na tela
-def draw_key(surface, key_pos, offset_x, offset_y):
-    """ Desenha a chave na tela."""
-    key_x, key_y = key_pos
-    pygame.draw.rect(surface, YELLOW, (key_x * draw_size - offset_x, key_y * draw_size - offset_y, draw_size, draw_size))
-
-
-# Função para mostrar a tela de vitória
-def show_victory_screen():
-    """ Mostra a tela de vitória."""
-    screen.fill(BLACK)
-    font = pygame.font.Font(None, 74)
-    text = font.render("Você venceu!", True, WHITE)
-    screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
-    pygame.display.flip()
-    pygame.time.wait(3000)
-
-# Loop principal do jogo
-run = True
-while run:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
-        elif event.type == pygame.KEYDOWN:
-            if game_state == START:
-                game_state = MENU
-            elif game_state == MENU:
-                if event.key == pygame.K_1:
-                    game_state = PLAYING
-                elif event.key == pygame.K_2:
-                    run = False
-            elif game_state == PLAYING:
-                if event.key == pygame.K_p:
-                    game_state = PAUSED
-                elif event.key == pygame.K_w:
-                    player.move('up', maze.maze)
-                elif event.key == pygame.K_s:
-                    player.move('down', maze.maze)
-                elif event.key == pygame.K_a:
-                    player.move('left', maze.maze)
-                elif event.key == pygame.K_d:
-                    player.move('right', maze.maze)
-            elif game_state == PAUSED:
-                if event.key == pygame.K_p:
-                    game_state = PLAYING
-            elif game_state == VICTORY:
-                if event.key == pygame.K_RETURN:
-                    game_state = MENU
-
-    if game_state == START:
-        draw_start_screen(screen, WIDTH, HEIGHT)
-    elif game_state == MENU:
-        draw_menu_screen(screen, WIDTH, HEIGHT)
-    elif game_state == PLAYING:   
-        screen.fill(BLACK)
-    
-    # Calcula o offset da câmera
-        offset_x = player.x * draw_size - WIDTH // 2 + draw_size // 2
-        offset_y = player.y * draw_size - HEIGHT // 2 + draw_size // 2
-        
-        maze.draw(screen, offset_x, offset_y)
-        if not has_key:
-            draw_key(screen, key_pos, offset_x, offset_y)
-        player.draw(screen, offset_x, offset_y)
+    def render(self):
+        self.state_stack[-1].render(self.dt, self.game_canvas)
+        self.shader.render()
+        self.screen.blit(pygame.transform.scale(self.game_canvas, self.SCREEN_SIZE), (0, 0))
         pygame.display.flip()
 
-        player.update()
+    def get_dt(self):
+        curr_time = time.time()
+        self.dt = curr_time - self.prev_time
+        self.prev_time = curr_time
 
-        # Verifica se o jogador coletou a chave
-        if (int(player.x + 0.5), int(player.y + 0.5)) == key_pos:
-            has_key = True
+    def draw_text(self, surface, text, color, xy):
+        text_surface = self.font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.center = xy
+        surface.blit(text_surface, text_rect)
 
-        # Verifica se o jogador chegou à saída e tem a chave
-        player_pos = (int(player.x + 0.5), int(player.y + 0.5))
-        exit_pos = (maze_height - 2, maze_width - 2)
+    def load_assets(self):
+        self.assets_dir = os.path.join('assets')
+        self.sprites_dir = os.path.join(self.assets_dir, 'sprites')
+        self.font_dir = os.path.join(self.assets_dir, 'fonts')
+        self.effects_dir = os.path.join(self.assets_dir, 'effects')
+        self.background = pygame.image.load('assets/backgrounds/end_portal.jpg')
+        self.background = pygame.transform.scale(self.background, self.SCREEN_SIZE)
+        self.wall = pygame.image.load(os.path.join(self.sprites_dir, 'obsidian.jpg'))
+        self.path = pygame.image.load(os.path.join(self.sprites_dir, 'end_stone.png'))
+        self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
+        self.key= pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Egg.jpg'))
+        self.font = pygame.font.Font(os.path.join(self.font_dir, 'Minecrafter.Reg.ttf'), 20)
+        self.player = pygame.image.load(os.path.join(self.sprites_dir, 'Dragon_Head_29.jpg'))
+        self.exit = pygame.image.load('assets/backgrounds/end_portal.jpg')
+        self.exit.set_alpha(200)
+        self.music_tracks = [
+            os.path.join(self.effects_dir, 'ko0x - Galaxy Guppy [Chiptune].mp3'),# Add more music track paths here
+            os.path.join(self.effects_dir, 'Into the Maze.mp3'),
+            os.path.join(self.effects_dir, 'Kubbi - Ember [Chiptune].mp3'),
+            os.path.join(self.effects_dir, 'Daniel Fridell, Sven Lindvall - Trail to Dolores.mp3'),
+            os.path.join(self.effects_dir, 'NEON DRIVE by Ghostrifter.mp3'),
+            os.path.join(self.effects_dir, 'Ava Low - Through the Prism.mp3'),
+            os.path.join(self.effects_dir, 'd4vd - Remember Me.mp3'),
+            os.path.join(self.effects_dir, 'Royal & the Serpent - Wasteland.mp3'),
+            os.path.join(self.effects_dir, 'Stromae, Pomme - Ma Meilleure Ennemie English.mp3'),
+            os.path.join(self.effects_dir, 'To Ashes and Blood.mp3'),
+        ]
+        self.current_track_index = 0
 
-        if player_pos == exit_pos and has_key:
-            game_state = VICTORY
 
-        # Controla a taxa de quadros
-        clock.tick(60)
+    def load_state(self):
+        self.state_stack.append(StartScreen(self))
 
-    elif game_state == PAUSED:
-        draw_pause_screen(screen, WIDTH, HEIGHT)
-    elif game_state == VICTORY:
-        draw_victory_screen(screen, WIDTH, HEIGHT)
+    def change_music(self):
+        self.current_track_index = (self.current_track_index + 1) % len(self.music_tracks)
+        current_track = os.path.basename(self.music_tracks[self.current_track_index])
+        mixer.music.load(self.music_tracks[self.current_track_index])
+        mixer.music.play(-1)
+        return current_track
 
-    # Aplica o shader
-    shader.render()
+    def adjust_volume(self, volume):
+        # Volume should be between 0.0 and 1.0
+        mixer.music.set_volume(max(0.0, min(1.0, volume)))
 
+    def reset_player_actions(self):
+        for action in self.player_actions:
+            self.player_actions[action] = False
 
-pygame.quit()
+if __name__ == "__main__":
+    game = Game()
+    game.run()
