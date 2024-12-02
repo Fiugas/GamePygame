@@ -74,7 +74,7 @@ class Maze:
                 screen_y = y * cell_size
                 if camera:
                     screen_x, screen_y = camera.apply(x, y)
-                if visibility_check and not visibility_check(x, y, player.x, player.y):
+                if visibility_check and not visibility_check(x, y, player):
                     continue
                 if self.grid[y][x] == 1:
                     surface.blit(pygame.transform.scale(game.wall, (cell_size, cell_size)), (screen_x, screen_y))
@@ -144,7 +144,7 @@ class Maze:
             exit_screen_x = self.exit[0] * cell_size
             exit_screen_y = self.exit[1] * cell_size
 
-        if visibility_check is None or visibility_check(self.exit[0], self.exit[1], player.x, player.y):
+        if visibility_check is None or visibility_check(self.exit[0], self.exit[1], player):
             surface.blit(pygame.transform.scale(game.exit, (cell_size, cell_size)), (exit_screen_x, exit_screen_y))
-        if visibility_check is None or visibility_check(self.start[0], self.start[1], player.x, player.y):
+        if visibility_check is None or visibility_check(self.start[0], self.start[1], player):
             pygame.draw.rect(surface, game.colors['GREEN'], pygame.Rect(Start_screen_x, Start_screen_y, cell_size, cell_size))  # Green color for the start
