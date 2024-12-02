@@ -1,13 +1,12 @@
 from states.state import State
 from states.game_world import GameWorld
 from states.resolution_screen import ResolutionScreen
-from states.score_screen import Score
 from states.sound_screen import ConfigureSound
 
 class TitleScreen(State):
     def __init__(self, game):
         State.__init__(self, game)
-        self.menu_options = {0: 'Start', 1: 'Change resolution', 2: 'Configure Sound', 3: 'Score', 4: 'Exit game'}
+        self.menu_options = {0: 'Start', 1: 'Change resolution', 2: 'Configure Sound', 3: 'Exit game'}
         self.menu_cursor = 0
 
     def update(self, dt, player_actions):
@@ -27,9 +26,6 @@ class TitleScreen(State):
         if option == 'Configure Sound':
             new_state = ConfigureSound(self.game)
             new_state.enter_state()
-        if option == 'Score':
-            new_state = Score(self.game)
-            new_state.enter_state()
         if option == 'Exit game':
             self.game.running, self.game.playing = False, False
 
@@ -39,5 +35,5 @@ class TitleScreen(State):
         self.game.draw_text(surface, 'Start', self.game.colors['GRAY'] if self.menu_cursor != 0 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 20))
         self.game.draw_text(surface, 'Change resolution', self.game.colors['GRAY'] if self.menu_cursor != 1 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 40))
         self.game.draw_text(surface, 'Configure Sound', self.game.colors['GRAY'] if self.menu_cursor != 2 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 60))
-        self.game.draw_text(surface, 'Exit game', self.game.colors['GRAY'] if self.menu_cursor != 4 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 100))
+        self.game.draw_text(surface, 'Exit game', self.game.colors['GRAY'] if self.menu_cursor != 3 else self.game.colors['WHITE'], (self.game.GAME_LOGIC_SIZE[0] / 2, self.game.GAME_LOGIC_SIZE[1] / 3 + 80))
 

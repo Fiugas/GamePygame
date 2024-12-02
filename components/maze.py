@@ -61,7 +61,6 @@ class Maze:
 
     def render(self, surface, cell_size, game, visibility_check=None, player = None, camera=None):
         self.draw_maze(surface, cell_size, visibility_check, player, game, camera)
-        self.draw_borders(surface, cell_size, game)
         self.key.render(surface, cell_size, game, camera, visibility_check, player)
         # Render key and exit with camera transformation
         self.draw_start_and_exit(surface, cell_size, game, camera, visibility_check, player)
@@ -80,58 +79,6 @@ class Maze:
                     surface.blit(pygame.transform.scale(game.wall, (cell_size, cell_size)), (screen_x, screen_y))
                 else:
                     surface.blit(pygame.transform.scale(game.path, (cell_size, cell_size)), (screen_x, screen_y))  # Light color for paths
-
-    def draw_borders(self, surface, cell_size, game):
-        # Determine which sides need borders by checking for open paths
-        border_check_sides = {
-            'left': any(self.grid[y][0] == 0 for y in range(self.height)),
-            'right': any(self.grid[y][self.width-1] == 0 for y in range(self.height)),
-            'top': any(self.grid[0][x] == 0 for x in range(self.width)),
-            'bottom': any(self.grid[self.height-1][x] == 0 for x in range(self.width))
-        }
-        self.draw_continuous_borders(surface, cell_size, game, border_check_sides)
-
-    def draw_continuous_borders(self, surface, cell_size, game, border_check_sides):
-        # Draw continuous borders where needed
-        if border_check_sides['left']:
-            for y in range(self.height):
-                border_rect = pygame.Rect(-cell_size, y * cell_size, cell_size, cell_size)
-                pygame.draw.rect(surface, game.colors['BLACK'], border_rect)
-
-        if border_check_sides['right']:
-            for y in range(self.height):
-                border_rect = pygame.Rect(self.width * cell_size, y * cell_size, cell_size, cell_size)
-                pygame.draw.rect(surface, game.colors['BLACK'], border_rect)
-
-        if border_check_sides['top']:
-            for x in range(self.width):
-                border_rect = pygame.Rect(x * cell_size, -cell_size, cell_size, cell_size)
-                pygame.draw.rect(surface, game.colors['BLACK'], border_rect)
-
-        if border_check_sides['bottom']:
-            for x in range(self.width):
-                border_rect = pygame.Rect(x * cell_size, self.height * cell_size, cell_size, cell_size)
-                pygame.draw.rect(surface, game.colors['BLACK'], border_rect)
-
-        self.fill_gaps_between_borders(surface, cell_size, game, border_check_sides)
-
-    def fill_gaps_between_borders(self, surface, cell_size, game, border_check_sides):
-        # Fill corner gaps where two borders meet
-        if border_check_sides['left'] and border_check_sides['top']:
-            corner_rect = pygame.Rect(-cell_size, -cell_size, cell_size, cell_size)
-            pygame.draw.rect(surface, game.colors['BLACK'], corner_rect)
-
-        if border_check_sides['left'] and border_check_sides['bottom']:
-            corner_rect = pygame.Rect(-cell_size, self.height * cell_size, cell_size, cell_size)
-            pygame.draw.rect(surface, game.colors['BLACK'], corner_rect)
-
-        if border_check_sides['right'] and border_check_sides['top']:
-            corner_rect = pygame.Rect(self.width * cell_size, -cell_size, cell_size, cell_size)
-            pygame.draw.rect(surface, game.colors['BLACK'], corner_rect)
-
-        if border_check_sides['right'] and border_check_sides['bottom']:
-            corner_rect = pygame.Rect(self.width * cell_size, self.height * cell_size, cell_size, cell_size)
-            pygame.draw.rect(surface, game.colors['BLACK'], corner_rect)
 
     def draw_start_and_exit(self, surface, cell_size, game, camera, visibility_check, player):
         # Render key and exit with camera transformation

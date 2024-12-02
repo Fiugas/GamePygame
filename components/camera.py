@@ -2,7 +2,7 @@ import pygame
 import math
 
 class Camera:
-    def __init__(self, maze, view_range=10):
+    def __init__(self, maze, view_range=3):
         self.maze = maze
         self.view_range = view_range
         self.fog_surface = None
@@ -23,8 +23,8 @@ class Camera:
     def apply_fog(self, surface, player):
         screen_width, screen_height = surface.get_size()
         self.fog_surface = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
-        self.fog_surface.fill((0, 0, 0, 250))
-        max_radius = int(3 * self.maze.cell_size)
+        self.fog_surface.fill((0, 0, 0, 215))
+        max_radius = int(self.view_range * self.maze.cell_size)
         fog_clear = pygame.Surface((max_radius * 2, max_radius * 2), pygame.SRCALPHA)
         for r in range(max_radius, 0, -1):
             alpha = int(255 * (r / max_radius) ** 2)
@@ -45,4 +45,6 @@ class Camera:
 
     def is_in_view_range(self, x, y, player):
         distance = math.sqrt((x - player.x)**2 + (y - player.y)**2)
-        return distance <= self.view_range * self.maze.cell_size
+        view_distance = min(self.view_range * self.maze.cell_size, distance)
+        distance_cells = int(distance / self.maze.cell_size)
+        return distance_cells <= view_distance
