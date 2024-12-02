@@ -19,7 +19,7 @@ class GameWorld(State):
 
     def update(self, dt, player_actions):
         self.player.update(player_actions, self.maze)
-        self.camera.update(self.player.x, self.player.y)
+        self.camera.update(self.player)
         if player_actions['PAUSE']:
             new_state = PauseScreen(self.game)
             new_state.enter_state()
@@ -39,4 +39,4 @@ class GameWorld(State):
                     player= self.player,
                     camera=self.camera)
         self.player.render(surface, self.cell_size, self.game, camera=self.camera)
-        self.camera.apply_fog(surface, self.player.x, self.player.y)
+        self.camera.apply_fog(surface, self.player)
