@@ -5,6 +5,7 @@ let
         pygame
         moderngl
         numpy
+        math
     ]);
 in
 pkgs.mkShell {
